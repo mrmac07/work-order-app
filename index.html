@@ -873,8 +873,7 @@
       lines.push("");
       lines.push("First bag sealing, weight, bulkiness, and stenciling were checked—all found ok, sir.");
 
-      document.getElementById("woMsgPreview").textContent = lines.join("
-");
+      document.getElementById("woMsgPreview").textContent = lines.join("\n");
     }
 
     async function handleImageUpload(event) {
@@ -1035,8 +1034,7 @@
       const prefix = (wo.lotPrefix || "").replace(/…$/, "");
       const fullLot = `${prefix}${pad3(batchRaw)}`;
       return {
-        text: `${lineLabel}: ${time}
-${wo.orderNo || 'PRD__'} | ${fullLot} - MD VERIFIED`,
+        text: `${lineLabel}: ${time}\n${wo.orderNo || 'PRD__'} | ${fullLot} - MD VERIFIED`,
         lineName: lineLabel, mdTime: time, orderNo: wo.orderNo || "", fullLot
       };
     }
@@ -1049,8 +1047,7 @@ ${wo.orderNo || 'PRD__'} | ${fullLot} - MD VERIFIED`,
       if (b2 && document.getElementById("mdL2Batch").value.trim()) parts.push(b2.text);
 
       document.getElementById("mdMsgPreview").textContent = parts.length
-        ? parts.join("
-")
+        ? parts.join("\n")
         : "Enter a batch number for Line 1 or Line 2 above to generate the message.";
     }
 
