@@ -23,6 +23,7 @@
       --line1-grad: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
       --line2-grad: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
       --md-grad: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      --sifter-grad: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
       --danger: #ef4444;
       --radius: 18px;
       --shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
@@ -43,23 +44,23 @@
       z-index: 50;
       background: var(--primary-grad);
       color: #fff;
-      padding: 16px 18px;
+      padding: 14px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       box-shadow: 0 4px 16px rgba(79, 70, 229, 0.25);
     }
     .topbar-left { display: flex; align-items: center; gap: 10px; }
-    .topbar h1 { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.3px; }
-    .topbar .sub { font-size: 12px; opacity: 0.88; display: block; margin-top: 2px; }
+    .topbar h1 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+    .topbar .sub { font-size: 12px; opacity: 0.88; display: block; margin-top: 1px; }
     .icon-btn {
       background: rgba(255,255,255,0.2);
       border: none;
       color: #fff;
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      font-size: 18px;
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      font-size: 17px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -67,14 +68,14 @@
     }
     .icon-btn:active { transform: scale(0.95); }
 
-    .container { max-width: 560px; margin: 0 auto; padding: 16px; }
+    .container { max-width: 560px; margin: 0 auto; padding: 14px; }
     .hidden { display: none !important; }
 
     .btn {
       width: 100%;
       border: none;
       border-radius: 14px;
-      padding: 14px 18px;
+      padding: 13px 16px;
       font-size: 15px;
       font-weight: 600;
       cursor: pointer;
@@ -89,13 +90,13 @@
     .btn-soft { background: #eef2ff; color: var(--primary); }
     .btn-success { background: var(--md-grad); color: #fff; }
     .btn-outline { background: #fff; color: var(--text); border: 1.5px solid var(--border); }
-    .btn-sm { padding: 8px 12px; font-size: 13px; border-radius: 10px; width: auto; }
+    .btn-sm { padding: 7px 11px; font-size: 12px; border-radius: 10px; width: auto; }
 
     .card {
       background: var(--card);
       border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
       box-shadow: var(--shadow);
       border: 1px solid rgba(226,232,240,0.8);
     }
@@ -114,13 +115,13 @@
       gap: 5px;
       font-size: 12px;
       font-weight: 600;
-      padding: 4px 10px;
+      padding: 3px 10px;
       border-radius: 999px;
-      margin-top: 6px;
+      margin-top: 5px;
     }
     .badge-day { background: #fef3c7; color: #b45309; }
     .badge-night { background: #e0e7ff; color: #3730a3; }
-    .shift-meta { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .shift-meta { font-size: 12px; color: var(--muted); margin-top: 5px; }
     .delete-btn {
       background: #fee2e2;
       color: var(--danger);
@@ -132,34 +133,35 @@
       cursor: pointer;
     }
 
-    .tile-grid { display: grid; gap: 14px; margin-top: 8px; }
+    .tile-grid { display: grid; gap: 12px; margin-top: 6px; }
     .tile {
-      border-radius: 20px;
-      padding: 22px 20px;
+      border-radius: 18px;
+      padding: 18px 18px;
       color: #fff;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.14);
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.13);
     }
     .tile:active { transform: scale(0.98); }
     .tile-l1 { background: var(--line1-grad); }
     .tile-l2 { background: var(--line2-grad); }
     .tile-md { background: var(--md-grad); }
-    .tile h2 { margin: 0; font-size: 20px; font-weight: 700; }
-    .tile p { margin: 4px 0 0; font-size: 13px; opacity: 0.9; }
-    .tile-icon { font-size: 32px; background: rgba(255,255,255,0.2); width: 54px; height: 54px; border-radius: 16px; display: flex; align-items: center; justify-content: center; }
+    .tile-sifter { background: var(--sifter-grad); }
+    .tile h2 { margin: 0; font-size: 19px; font-weight: 700; }
+    .tile p { margin: 3px 0 0; font-size: 12.5px; opacity: 0.92; }
+    .tile-icon { font-size: 28px; background: rgba(255,255,255,0.2); width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
 
     .wo-tabs {
       display: flex;
       gap: 8px;
       overflow-x: auto;
       padding-bottom: 6px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .wo-pill {
-      padding: 8px 14px;
+      padding: 7px 13px;
       border-radius: 999px;
       border: 1.5px solid var(--border);
       background: #fff;
@@ -172,93 +174,140 @@
     .wo-pill.active { background: var(--primary); color: #fff; border-color: var(--primary); }
     .wo-pill.add-pill { background: #ecfeff; color: #0891b2; border-color: #a5f3fc; }
 
-    .scan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    /* Compact Scan Bar */
+    .scan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
     .scan-box {
-      border: 2px dashed #cbd5e1;
-      border-radius: 14px;
-      padding: 14px 10px;
-      text-align: center;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 9px 10px;
       cursor: pointer;
       background: #f8fafc;
       font-size: 13px;
       font-weight: 600;
       color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
-    .scan-box span { display: block; font-size: 22px; margin-bottom: 4px; }
+    .scan-box:active { background: #eef2ff; }
+    .scan-box span { font-size: 16px; }
+
+    /* Inline Zoomable / Scrollable Photo Box */
     .preview-img-wrap {
       position: relative;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid var(--border);
+      background: #0f172a;
     }
-    .preview-img-wrap img { width: 100%; max-height: 180px; object-fit: cover; display: block; }
-    .drive-link {
-      position: absolute;
-      bottom: 8px;
-      right: 8px;
-      background: rgba(15,23,42,0.78);
+    .preview-scroll-box {
+      width: 100%;
+      height: 170px;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-in;
+    }
+    .preview-scroll-box img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+    .preview-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      background: rgba(15, 23, 42, 0.9);
       color: #fff;
       font-size: 11px;
-      padding: 5px 9px;
-      border-radius: 8px;
+    }
+    .preview-actions button, .preview-actions a {
+      background: rgba(255,255,255,0.16);
+      color: #fff;
+      border: none;
+      padding: 4px 9px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 600;
       text-decoration: none;
+      cursor: pointer;
     }
 
     .kv-row {
       display: grid;
-      grid-template-columns: 115px 1fr;
+      grid-template-columns: 112px 1fr;
       align-items: center;
-      gap: 10px;
-      padding: 8px 0;
+      gap: 8px;
+      padding: 6px 0;
       border-bottom: 1px solid #f1f5f9;
     }
     .kv-row:last-child { border-bottom: none; }
-    .kv-label { font-size: 13px; font-weight: 700; color: #334155; }
+    .kv-label { font-size: 12.5px; font-weight: 700; color: #334155; }
     .kv-input, select {
       width: 100%;
-      padding: 9px 11px;
+      padding: 8px 10px;
       border: 1.5px solid var(--border);
       border-radius: 10px;
-      font-size: 14px;
+      font-size: 13.5px;
       color: var(--text);
       background: #f8fafc;
       font-family: inherit;
     }
     .kv-input:focus, select:focus { outline: none; border-color: var(--primary); background: #fff; }
-    .split-inputs { display: grid; grid-template-columns: 1.4fr 1fr; gap: 8px; }
+    .split-inputs { display: grid; grid-template-columns: 1.4fr 1fr; gap: 6px; }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-top: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+      cursor: pointer;
+    }
+    .check-row input[type="checkbox"] { width: 17px; height: 17px; accent-color: var(--primary); }
 
     .seg-toggle {
       display: grid;
       grid-template-columns: 1fr 1fr;
       background: #e2e8f0;
-      padding: 4px;
-      border-radius: 12px;
-      margin: 12px 0;
+      padding: 3px;
+      border-radius: 11px;
+      margin: 10px 0;
     }
     .seg-btn {
       border: none;
       background: transparent;
-      padding: 10px;
-      border-radius: 9px;
+      padding: 8px;
+      border-radius: 8px;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13.5px;
       color: var(--muted);
       cursor: pointer;
     }
-    .seg-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .seg-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
 
     .msg-box {
       background: #0f172a;
       color: #f8fafc;
       border-radius: 16px;
       overflow: hidden;
-      margin-top: 14px;
+      margin-top: 12px;
       box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
     }
     .msg-header {
       background: #1e293b;
-      padding: 10px 14px;
+      padding: 9px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -267,7 +316,7 @@
       font-weight: 600;
     }
     .copy-btn {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.12);
       border: none;
       color: #fff;
       padding: 6px 12px;
@@ -277,17 +326,111 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
     .copy-btn.copied { background: #10b981; }
     .msg-body {
-      padding: 14px;
+      padding: 13px;
       white-space: pre-wrap;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 13px;
-      line-height: 1.55;
+      font-size: 12.5px;
+      line-height: 1.5;
       margin: 0;
       word-break: break-word;
+    }
+
+    /* Sifter Mesh Photo Grid */
+    .mesh-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .mesh-thumb {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      aspect-ratio: 1 / 1;
+      background: #f1f5f9;
+    }
+    .mesh-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: zoom-in;
+    }
+    .mesh-del {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(239, 68, 68, 0.9);
+      color: #fff;
+      border: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mesh-drive-badge {
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+      background: rgba(15, 23, 42, 0.78);
+      color: #fff;
+      font-size: 9px;
+      padding: 2px 5px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+
+    /* Fullscreen Zoomable Image Modal */
+    .zoom-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.94);
+      z-index: 400;
+      display: flex;
+      flex-direction: column;
+    }
+    .zoom-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: rgba(15, 23, 42, 0.9);
+      color: #fff;
+      gap: 8px;
+    }
+    .zoom-controls { display: flex; gap: 6px; align-items: center; }
+    .zoom-btn {
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+      border: none;
+      padding: 7px 12px;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .zoom-viewport {
+      flex: 1;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 12px;
+    }
+    .zoom-viewport img {
+      transform-origin: top left;
+      display: block;
+      margin: auto;
+      transition: width 0.15s ease;
     }
 
     .modal-backdrop {
@@ -317,11 +460,13 @@
       transform: translateX(-50%);
       background: #0f172a;
       color: #fff;
-      padding: 11px 18px;
-      border-radius: 999px;
+      padding: 10px 16px;
+      border-radius: 16px;
       font-size: 13px;
       font-weight: 600;
-      z-index: 200;
+      z-index: 500;
+      max-width: 90%;
+      text-align: center;
       box-shadow: 0 8px 20px rgba(0,0,0,0.25);
     }
 
@@ -352,11 +497,12 @@
       color: #166534;
       border: 1px solid #bbf7d0;
       border-radius: 10px;
-      padding: 8px 12px;
+      padding: 7px 11px;
       font-size: 12px;
       font-weight: 600;
       margin-top: 6px;
     }
+    .hint-text { font-size: 11px; color: var(--muted); margin-top: 3px; }
   </style>
 </head>
 <body>
@@ -377,13 +523,15 @@
 
   <main class="container">
 
+    <!-- VIEW 1: HOME (SHIFTS - MAX 30) -->
     <section id="view-home">
-      <button class="btn btn-primary" style="margin-bottom:16px;" onclick="openNewShiftModal()">
+      <button class="btn btn-primary" style="margin-bottom:14px;" onclick="openNewShiftModal()">
         ＋ Add New Shift
       </button>
       <div id="shiftsList"></div>
     </section>
 
+    <!-- VIEW 2: SHIFT HUB -->
     <section id="view-shift" class="hidden">
       <div class="tile-grid">
         <div class="tile tile-l1" onclick="openLine('line1')">
@@ -409,13 +557,23 @@
           </div>
           <div class="tile-icon">🧲</div>
         </div>
+
+        <div class="tile tile-sifter" onclick="openSifter()">
+          <div>
+            <h2>Sifter Mesh</h2>
+            <p id="hubSifterSummary">Upload Line 1 & Line 2 mesh photos</p>
+          </div>
+          <div class="tile-icon">🕸️</div>
+        </div>
       </div>
     </section>
 
+    <!-- VIEW 3: LINE 1 / LINE 2 -->
     <section id="view-line" class="hidden">
       <div id="woTabs" class="wo-tabs"></div>
 
       <div class="card">
+        <!-- Compact Scan Bar -->
         <div class="scan-grid">
           <label class="scan-box">
             <span>📷</span>Take Photo
@@ -427,9 +585,18 @@
           </label>
         </div>
 
+        <!-- Zoomable / Scrollable Photo Preview -->
         <div id="woImgPreviewWrap" class="preview-img-wrap hidden">
-          <img id="woImgPreview" alt="Work Order Preview" />
-          <a id="woDriveLink" class="drive-link hidden" target="_blank">Open in Drive ↗</a>
+          <div class="preview-scroll-box" onclick="openZoomModal(document.getElementById('woImgPreview').src)">
+            <img id="woImgPreview" alt="Work Order Preview" />
+          </div>
+          <div class="preview-actions">
+            <span>Tap photo to zoom & scroll</span>
+            <div style="display:flex; gap:6px;">
+              <button type="button" onclick="openZoomModal(document.getElementById('woImgPreview').src)">🔍 Zoom</button>
+              <a id="woDriveLink" class="hidden" target="_blank">Drive ↗</a>
+            </div>
+          </div>
         </div>
 
         <div class="kv-row">
@@ -447,7 +614,7 @@
 
         <div class="kv-row">
           <div class="kv-label">Product:</div>
-          <input id="fProduct" class="kv-input" placeholder="WPC - ZENNOH (Plain Bag)" oninput="onFieldChange()" />
+          <input id="fProduct" class="kv-input" placeholder="GOLD LEAF WPC - ZEN" oninput="onFieldChange()" />
         </div>
 
         <div class="kv-row">
@@ -465,19 +632,43 @@
 
         <div id="batchSummaryPill" class="pill-info hidden"></div>
 
+        <!-- NEW vs CONTINUE -->
         <div class="seg-toggle">
           <button id="btnModeNew" class="seg-btn active" onclick="setWoMode('new')">✨ New</button>
           <button id="btnModeCont" class="seg-btn" onclick="setWoMode('continue')">🔄 Continue</button>
         </div>
 
-        <div id="continueBox" class="hidden">
+        <!-- Shared W/O Checkbox -->
+        <label class="check-row">
+          <input type="checkbox" id="fSharedWo" onchange="onFieldChange()" />
+          <span>Both lines share same W/O</span>
+        </label>
+
+        <!-- Completed Batches & Balance Box (shown for Continue OR Shared W/O) -->
+        <div id="balanceBox" class="hidden" style="margin-top:8px;">
           <div class="kv-row">
-            <div class="kv-label">Last Batch #:</div>
-            <input id="fLastBatch" type="number" class="kv-input" placeholder="e.g. 10" oninput="onFieldChange()" />
+            <div class="kv-label">Completed:</div>
+            <div>
+              <input id="fCompletedInput" class="kv-input" placeholder="e.g. 10  or  110-120  or  1-25, 45-48" oninput="onFieldChange()" />
+              <div class="hint-text">Enter batch count (10) or ranges (1-25, 45-48, 110-125)</div>
+            </div>
           </div>
+          <div id="completedBreakdownPill" class="pill-info hidden" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;"></div>
           <div class="kv-row">
-            <div class="kv-label">Remaining (MT):</div>
+            <div class="kv-label">Balance (MT):</div>
             <input id="fRemaining" type="number" step="0.1" class="kv-input" placeholder="Auto-calculated" oninput="onFieldChange(true)" />
+          </div>
+        </div>
+
+        <!-- Starting Batch Indicator -->
+        <label class="check-row">
+          <input type="checkbox" id="fShowStartBatch" onchange="onFieldChange()" />
+          <span>Indicate starting batch (e.g. B031)</span>
+        </label>
+        <div id="startBatchBox" class="hidden" style="margin-top:6px;">
+          <div class="kv-row">
+            <div class="kv-label">Starts From #:</div>
+            <input id="fStartBatch" type="number" class="kv-input" placeholder="e.g. 31 → B031" oninput="onFieldChange()" />
           </div>
         </div>
 
@@ -486,6 +677,7 @@
         </button>
       </div>
 
+      <!-- ChatGPT-style Copyable Message -->
       <div class="msg-box">
         <div class="msg-header">
           <span>WhatsApp Message</span>
@@ -497,6 +689,7 @@
       </div>
     </section>
 
+    <!-- VIEW 4: METAL DETECTOR -->
     <section id="view-md" class="hidden">
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -556,14 +749,66 @@
         ✅ Save MD Test to History & Drive
       </button>
 
-      <div id="mdHistoryBox" class="card hidden" style="margin-top:16px;">
+      <div id="mdHistoryBox" class="card hidden" style="margin-top:14px;">
         <div style="font-weight:700; margin-bottom:8px; font-size:14px;">Recent MD Logs (This Shift)</div>
         <div id="mdHistoryList" style="font-size:12px; color:var(--muted);"></div>
       </div>
     </section>
 
+    <!-- VIEW 5: SIFTER MESH PICTURES -->
+    <section id="view-sifter" class="hidden">
+      <!-- Line 1 Sifter Mesh -->
+      <div class="card">
+        <div style="font-weight:700; color:#2563eb; font-size:15px; margin-bottom:10px;">📦 Line 1 — Sifter Mesh Photos</div>
+        <div class="scan-grid">
+          <label class="scan-box">
+            <span>📷</span>Take Photo
+            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleSifterUpload(event, 'line1')" />
+          </label>
+          <label class="scan-box">
+            <span>🖼️</span>Upload Photos
+            <input type="file" accept="image/*" multiple class="hidden" onchange="handleSifterUpload(event, 'line1')" />
+          </label>
+        </div>
+        <div id="sifterGridL1" class="mesh-grid"></div>
+      </div>
+
+      <!-- Line 2 Sifter Mesh -->
+      <div class="card">
+        <div style="font-weight:700; color:#9333ea; font-size:15px; margin-bottom:10px;">🏭 Line 2 — Sifter Mesh Photos</div>
+        <div class="scan-grid">
+          <label class="scan-box">
+            <span>📷</span>Take Photo
+            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleSifterUpload(event, 'line2')" />
+          </label>
+          <label class="scan-box">
+            <span>🖼️</span>Upload Photos
+            <input type="file" accept="image/*" multiple class="hidden" onchange="handleSifterUpload(event, 'line2')" />
+          </label>
+        </div>
+        <div id="sifterGridL2" class="mesh-grid"></div>
+      </div>
+    </section>
+
   </main>
 
+  <!-- FULLSCREEN ZOOM MODAL -->
+  <div id="zoomModal" class="zoom-modal hidden">
+    <div class="zoom-toolbar">
+      <div class="zoom-controls">
+        <button class="zoom-btn" onclick="changeZoom(-0.5)">－</button>
+        <span id="zoomLevelText" style="font-size:13px; min-width:44px; text-align:center;">100%</span>
+        <button class="zoom-btn" onclick="changeZoom(0.5)">＋</button>
+        <button class="zoom-btn" onclick="resetZoom()">Reset</button>
+      </div>
+      <button class="zoom-btn" style="background:#ef4444;" onclick="closeZoomModal()">✕ Close</button>
+    </div>
+    <div id="zoomViewport" class="zoom-viewport">
+      <img id="zoomModalImg" alt="Zoomed Image" />
+    </div>
+  </div>
+
+  <!-- MODAL: NEW SHIFT -->
   <div id="newShiftModal" class="modal-backdrop hidden" onclick="closeModalOnBg(event, 'newShiftModal')">
     <div class="modal-sheet">
       <h2 style="margin:0 0 14px; font-size:19px;">Create New Shift</h2>
@@ -579,6 +824,7 @@
     </div>
   </div>
 
+  <!-- MODAL: SETTINGS -->
   <div id="settingsModal" class="modal-backdrop hidden" onclick="closeModalOnBg(event, 'settingsModal')">
     <div class="modal-sheet">
       <h2 style="margin:0 0 10px; font-size:19px;">Google Drive Connection</h2>
@@ -592,13 +838,14 @@
 
   <div id="loader" class="loader-overlay hidden">
     <div class="spinner"></div>
-    <div id="loaderText">Scanning & saving to Drive...</div>
+    <div id="loaderText">Working...</div>
   </div>
   <div id="toast" class="toast hidden"></div>
 
   <script>
     const STORAGE_KEY = "wo_app_shifts_v1";
     const URL_KEY = "wo_app_script_url";
+    const MAX_SHIFTS_DISPLAY = 30;
 
     let shifts = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
     let scriptUrl = localStorage.getItem(URL_KEY) || "";
@@ -607,26 +854,41 @@
     let activeLineKey = "line1";
     let activeWoIdx = 0;
     let newShiftType = "Day shift";
+    let currentZoom = 1;
 
     window.addEventListener("DOMContentLoaded", () => {
       renderShiftsList();
       if (scriptUrl) syncFromCloud(true);
     });
 
-    function saveLocal() { localStorage.setItem(STORAGE_KEY, JSON.stringify(shifts)); }
+    function saveLocal() {
+      // Keep max 30 shifts locally to stay fast & clean
+      if (shifts.length > MAX_SHIFTS_DISPLAY) shifts = shifts.slice(0, MAX_SHIFTS_DISPLAY);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(shifts));
+    }
+
     function getActiveShift() { return shifts.find(s => s.id === activeShiftId); }
+
     function makeEmptyWo() {
       return {
         id: "wo_" + Date.now() + "_" + Math.floor(Math.random()*999),
         orderNo: "", customer: "", lotPrefix: "", product: "", origin: "",
-        totalQtyMT: "", batchSizeMT: "1.2", mode: "new", lastBatch: "",
-        remainingMT: "", imageUrl: "", localPreview: ""
+        totalQtyMT: "", batchSizeMT: "1.2", mode: "new",
+        sharedWo: false, completedInput: "", remainingMT: "",
+        showStartBatch: false, startBatch: "",
+        imageUrl: "", localPreview: ""
       };
+    }
+
+    function ensureSifterObj(shift) {
+      if (!shift.sifterMesh) shift.sifterMesh = { line1: [], line2: [] };
+      if (!shift.sifterMesh.line1) shift.sifterMesh.line1 = [];
+      if (!shift.sifterMesh.line2) shift.sifterMesh.line2 = [];
     }
 
     function showView(view) {
       currentView = view;
-      ["home", "shift", "line", "md"].forEach(v => {
+      ["home", "shift", "line", "md", "sifter"].forEach(v => {
         document.getElementById("view-" + v).classList.toggle("hidden", v !== view);
       });
       document.getElementById("backBtn").classList.toggle("hidden", view === "home");
@@ -638,7 +900,7 @@
         renderShiftsList();
       } else if (view === "shift") {
         document.getElementById("headerTitle").textContent = shift.name;
-        document.getElementById("headerSub").textContent = "Select Line or Metal Detector";
+        document.getElementById("headerSub").textContent = "Select Line, MD, or Sifter Mesh";
         updateShiftHubSummaries();
       } else if (view === "line") {
         document.getElementById("headerTitle").textContent = activeLineKey === "line1" ? "Line 1" : "Line 2";
@@ -646,15 +908,19 @@
       } else if (view === "md") {
         document.getElementById("headerTitle").textContent = "Metal Detector";
         document.getElementById("headerSub").textContent = shift.name;
+      } else if (view === "sifter") {
+        document.getElementById("headerTitle").textContent = "Sifter Mesh";
+        document.getElementById("headerSub").textContent = shift.name;
       }
       window.scrollTo(0, 0);
     }
 
     function goBack() {
-      if (currentView === "line" || currentView === "md") showView("shift");
+      if (currentView === "line" || currentView === "md" || currentView === "sifter") showView("shift");
       else if (currentView === "shift") showView("home");
     }
 
+    // ==================== HOME: SHIFTS ====================
     function openNewShiftModal() {
       const today = new Date();
       const yyyy = today.getFullYear();
@@ -680,7 +946,8 @@
       const newShift = {
         id: "shift_" + Date.now(), name, type: newShiftType,
         createdAt: new Date().toISOString(),
-        line1: [makeEmptyWo()], line2: [makeEmptyWo()], mdLogs: []
+        line1: [makeEmptyWo()], line2: [makeEmptyWo()],
+        mdLogs: [], sifterMesh: { line1: [], line2: [] }
       };
 
       shifts.unshift(newShift);
@@ -692,7 +959,8 @@
 
     function renderShiftsList() {
       const el = document.getElementById("shiftsList");
-      if (!shifts.length) {
+      const visibleShifts = shifts.slice(0, MAX_SHIFTS_DISPLAY);
+      if (!visibleShifts.length) {
         el.innerHTML = `<div class="card" style="text-align:center; color:var(--muted); padding:34px 16px;">
           <div style="font-size:34px; margin-bottom:8px;">📋</div>
           <b>No shifts yet</b><br/>Tap "Add New Shift" to start your day.
@@ -700,19 +968,21 @@
         return;
       }
 
-      el.innerHTML = shifts.map(s => {
+      el.innerHTML = visibleShifts.map(s => {
         const l1Count = (s.line1 || []).filter(w => w.orderNo).length;
         const l2Count = (s.line2 || []).filter(w => w.orderNo).length;
         const mdCount = (s.mdLogs || []).length;
+        const meshCount = ((s.sifterMesh && s.sifterMesh.line1) ? s.sifterMesh.line1.length : 0) +
+                          ((s.sifterMesh && s.sifterMesh.line2) ? s.sifterMesh.line2.length : 0);
         const isDay = s.type === "Day shift";
         return `
           <div class="card shift-card" onclick="openShift('${s.id}')">
             <div>
-              <div style="font-weight:700; font-size:16px;">${s.name}</div>
+              <div style="font-weight:700; font-size:15.5px;">${s.name}</div>
               <span class="shift-badge ${isDay ? 'badge-day' : 'badge-night'}">
                 ${isDay ? '☀️ Day Shift' : '🌙 Night Shift'}
               </span>
-              <div class="shift-meta">L1: ${l1Count} WO • L2: ${l2Count} WO • MD: ${mdCount} logs</div>
+              <div class="shift-meta">L1: ${l1Count} • L2: ${l2Count} • MD: ${mdCount} • Mesh: ${meshCount}</div>
             </div>
             <button class="delete-btn" onclick="deleteShift(event, '${s.id}')" title="Delete Shift">🗑</button>
           </div>
@@ -733,6 +1003,7 @@
 
     function updateShiftHubSummaries() {
       const s = getActiveShift();
+      ensureSifterObj(s);
       const l1Last = s.line1[s.line1.length - 1];
       const l2Last = s.line2[s.line2.length - 1];
       document.getElementById("hubL1Summary").textContent = l1Last && l1Last.orderNo
@@ -740,8 +1011,10 @@
       document.getElementById("hubL2Summary").textContent = l2Last && l2Last.orderNo
         ? `Active: ${l2Last.orderNo} (${s.line2.length} WO)` : "Tap to scan or enter Work Order";
       document.getElementById("hubMdSummary").textContent = `${(s.mdLogs || []).length} tests logged this shift`;
+      document.getElementById("hubSifterSummary").textContent = `L1: ${s.sifterMesh.line1.length} photo(s) • L2: ${s.sifterMesh.line2.length} photo(s)`;
     }
 
+    // ==================== LINE 1 & LINE 2 ====================
     function openLine(lineKey) {
       activeLineKey = lineKey;
       const shift = getActiveShift();
@@ -785,8 +1058,11 @@
       document.getElementById("fOrigin").value = wo.origin || "";
       document.getElementById("fTotalQty").value = wo.totalQtyMT || "";
       document.getElementById("fBatchSize").value = wo.batchSizeMT || "1.2";
-      document.getElementById("fLastBatch").value = wo.lastBatch || "";
+      document.getElementById("fSharedWo").checked = !!wo.sharedWo;
+      document.getElementById("fCompletedInput").value = wo.completedInput || wo.lastBatch || "";
       document.getElementById("fRemaining").value = wo.remainingMT || "";
+      document.getElementById("fShowStartBatch").checked = !!wo.showStartBatch;
+      document.getElementById("fStartBatch").value = wo.startBatch || "";
 
       const wrap = document.getElementById("woImgPreviewWrap");
       const img = document.getElementById("woImgPreview");
@@ -797,6 +1073,7 @@
       else { link.classList.add("hidden"); }
 
       setWoMode(wo.mode || "new", true);
+      updateConditionalBoxes();
       updateBatchCalculations(false);
       renderWoMessage();
     }
@@ -806,8 +1083,15 @@
       wo.mode = mode;
       document.getElementById("btnModeNew").classList.toggle("active", mode === "new");
       document.getElementById("btnModeCont").classList.toggle("active", mode === "continue");
-      document.getElementById("continueBox").classList.toggle("hidden", mode !== "continue");
+      updateConditionalBoxes();
       if (!skipSave) { updateBatchCalculations(false); saveLocal(); renderWoMessage(); }
+    }
+
+    function updateConditionalBoxes() {
+      const wo = getActiveWo();
+      const showBal = (wo.mode === "continue" || !!wo.sharedWo);
+      document.getElementById("balanceBox").classList.toggle("hidden", !showBal);
+      document.getElementById("startBatchBox").classList.toggle("hidden", !wo.showStartBatch);
     }
 
     function onFieldChange(manualRemaining = false) {
@@ -819,7 +1103,12 @@
       wo.origin = document.getElementById("fOrigin").value.trim();
       wo.totalQtyMT = document.getElementById("fTotalQty").value.trim();
       wo.batchSizeMT = document.getElementById("fBatchSize").value.trim() || "1.2";
-      wo.lastBatch = document.getElementById("fLastBatch").value.trim();
+      wo.sharedWo = document.getElementById("fSharedWo").checked;
+      wo.completedInput = document.getElementById("fCompletedInput").value.trim();
+      wo.showStartBatch = document.getElementById("fShowStartBatch").checked;
+      wo.startBatch = document.getElementById("fStartBatch").value.trim();
+
+      updateConditionalBoxes();
 
       if (manualRemaining) { wo.remainingMT = document.getElementById("fRemaining").value.trim(); }
       else { updateBatchCalculations(false); }
@@ -831,25 +1120,75 @@
 
     function cleanNum(num) { return Number(num.toFixed(2)).toString(); }
 
+    // Smart parser: supports "10", "110-120", "1-25, 45-48, 110-125"
+    function parseCompletedBatches(inputStr) {
+      if (!inputStr) return null;
+      const clean = inputStr.replace(/[bB]/g, "").trim();
+      if (!clean) return null;
+
+      // Single plain number -> means that many batches completed (e.g. 10)
+      if (/^\d+(\.\d+)?$/.test(clean)) {
+        return parseFloat(clean);
+      }
+
+      // Ranges or comma-separated items
+      const tokens = clean.split(/[,;+\s]+/).filter(Boolean);
+      let totalBatches = 0;
+      let valid = false;
+
+      for (const tok of tokens) {
+        if (tok.includes("-")) {
+          const parts = tok.split("-").map(x => parseInt(x, 10));
+          if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+            const diff = Math.abs(parts[1] - parts[0]) + 1;
+            totalBatches += diff;
+            valid = true;
+          }
+        } else {
+          const n = parseFloat(tok);
+          if (!isNaN(n)) {
+            totalBatches += n;
+            valid = true;
+          }
+        }
+      }
+      return valid ? totalBatches : null;
+    }
+
     function updateBatchCalculations(skipInputWrite) {
       const wo = getActiveWo();
       const total = parseFloat(wo.totalQtyMT);
       const bSize = parseFloat(wo.batchSizeMT) || 1.2;
-      const lastB = parseFloat(wo.lastBatch);
       const pill = document.getElementById("batchSummaryPill");
+      const compPill = document.getElementById("completedBreakdownPill");
 
       if (!isNaN(total) && total > 0 && bSize > 0) {
         const totalBatches = cleanNum(total / bSize);
-        pill.textContent = `📊 ${total} MT = ${totalBatches} batches (${bSize} MT / batch)`;
+        pill.textContent = `📊 ${total}MT = ${totalBatches} batches (${bSize}MT / batch)`;
         pill.classList.remove("hidden");
-        if (wo.mode === "continue" && !isNaN(lastB)) {
-          const rem = Math.max(0, total - (lastB * bSize));
+
+        const showBal = (wo.mode === "continue" || !!wo.sharedWo);
+        const compCount = parseCompletedBatches(wo.completedInput);
+
+        if (showBal && compCount !== null) {
+          const compMT = compCount * bSize;
+          const rem = Math.max(0, total - compMT);
           wo.remainingMT = cleanNum(rem);
           if (!skipInputWrite) document.getElementById("fRemaining").value = wo.remainingMT;
+          compPill.textContent = `✅ Completed: ${cleanNum(compCount)} batches (${cleanNum(compMT)}MT) → Balance: ${wo.remainingMT}MT`;
+          compPill.classList.remove("hidden");
+        } else {
+          compPill.classList.add("hidden");
         }
       } else {
         pill.classList.add("hidden");
+        compPill.classList.add("hidden");
       }
+    }
+
+    function pad3(val) {
+      const n = String(val || "").replace(/\D/g, "");
+      return n ? n.padStart(3, "0") : "___";
     }
 
     function renderWoMessage() {
@@ -857,25 +1196,45 @@
       const lineLabel = activeLineKey === "line1" ? "Line 1" : "Line 2";
       const headerText = wo.mode === "new" ? `*${lineLabel}:* New Work Order` : `*${lineLabel}:* Work Order`;
       const woLine = wo.customer ? `${wo.orderNo} (${wo.customer})` : wo.orderNo;
-      const lotText = wo.lotPrefix ? (wo.lotPrefix.endsWith("…") ? wo.lotPrefix : `${wo.lotPrefix}…`) : "";
+      const lotText = wo.lotPrefix ? (wo.lotPrefix.endsWith("...") ? wo.lotPrefix : `${wo.lotPrefix}...`) : "";
 
       let lines = [
-        "*Dear Sirs & Ms. Priya..!*","",
-        headerText,
-        `W/O: ${woLine}`,
-        `Lot No.: ${lotText}`,
-        `Product: ${wo.product}`
+        "*Dear Sirs & Ms Priya,*",
+        "",
+        headerText
       ];
 
-      if (wo.origin) lines.push(`Origin: ${wo.origin}`);
-      lines.push(`Total Quantity: ${wo.totalQtyMT ? wo.totalQtyMT + " MT" : ""}`);
-      if (wo.mode === "continue" && wo.remainingMT !== "") lines.push(`Remaining quantity: ${wo.remainingMT} MT`);
+      if (wo.sharedWo) {
+        lines.push("Both lines shares same W/O");
+      }
+
+      lines.push(`*W/O:* ${woLine}`);
+      lines.push(`*Lot No.:* ${lotText}`);
+      lines.push(`*Product:* ${wo.product}`);
+
+      if (wo.origin) {
+        lines.push(`*Origin:* ${wo.origin}`);
+      }
+
+      lines.push(`*Total Quantity:* ${wo.totalQtyMT ? wo.totalQtyMT + "MT" : ""}`);
+
+      const showBal = (wo.mode === "continue" || !!wo.sharedWo);
+      if (showBal && wo.remainingMT !== "") {
+        lines.push(`*Balance Quantity:* ${wo.remainingMT}MT`);
+      }
+
+      if (wo.showStartBatch && wo.startBatch) {
+        lines.push("");
+        lines.push(`*---> Batch starts from B${pad3(wo.startBatch)}*`);
+      }
+
       lines.push("");
-      lines.push("First bag sealing, weight, bulkiness, and stenciling were checked—all found ok, sir.");
+      lines.push("First bag sealing, weight, bulkiness and stencilling checked – all found OK sir.");
 
       document.getElementById("woMsgPreview").textContent = lines.join("\n");
     }
 
+    // ==================== IMAGE UPLOAD + OCR ====================
     async function handleImageUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -970,9 +1329,10 @@
             action: "log_wo",
             shiftName: getActiveShift().name,
             lineName: activeLineKey === "line1" ? "Line 1" : "Line 2",
-            mode: wo.mode, orderNo: wo.orderNo, customer: wo.customer,
+            mode: wo.mode + (wo.sharedWo ? " (Shared)" : ""),
+            orderNo: wo.orderNo, customer: wo.customer,
             lotPrefix: wo.lotPrefix, product: wo.product, origin: wo.origin,
-            totalQtyMT: wo.totalQtyMT, remainingMT: wo.mode === "continue" ? wo.remainingMT : "",
+            totalQtyMT: wo.totalQtyMT, remainingMT: (wo.mode === "continue" || wo.sharedWo) ? wo.remainingMT : "",
             imageUrl: wo.imageUrl
           })
         });
@@ -984,6 +1344,7 @@
       }
     }
 
+    // ==================== METAL DETECTOR ====================
     function getRoundedTimeStr() {
       const now = new Date();
       let mins = Math.round(now.getMinutes() / 5) * 5;
@@ -1018,11 +1379,6 @@
       sel.value = String(woList.length - 1);
     }
 
-    function pad3(val) {
-      const n = String(val || "").replace(/\D/g, "");
-      return n ? n.padStart(3, "0") : "___";
-    }
-
     function buildMdLineBlock(lineLabel, lineKey, enabledId, selectId, batchId, timeId) {
       if (!document.getElementById(enabledId).checked) return null;
       const batchRaw = document.getElementById(batchId).value.trim();
@@ -1031,7 +1387,7 @@
       if (!wo || (!batchRaw && !wo.orderNo)) return null;
 
       const time = document.getElementById(timeId).value || getRoundedTimeStr();
-      const prefix = (wo.lotPrefix || "").replace(/…$/, "");
+      const prefix = (wo.lotPrefix || "").replace(/(\.\.\.|…)$/, "");
       const fullLot = `${prefix}${pad3(batchRaw)}`;
       return {
         text: `${lineLabel}: ${time}\n${wo.orderNo || 'PRD__'} | ${fullLot} - MD VERIFIED`,
@@ -1095,6 +1451,124 @@
       `).join("");
     }
 
+    // ==================== SIFTER MESH ====================
+    function openSifter() {
+      ensureSifterObj(getActiveShift());
+      showView("sifter");
+      renderSifterGrids();
+    }
+
+    function renderSifterGrids() {
+      const s = getActiveShift();
+      ensureSifterObj(s);
+      renderSingleSifterGrid("sifterGridL1", s.sifterMesh.line1, "line1");
+      renderSingleSifterGrid("sifterGridL2", s.sifterMesh.line2, "line2");
+    }
+
+    function renderSingleSifterGrid(elId, list, lineKey) {
+      const el = document.getElementById(elId);
+      if (!list.length) {
+        el.innerHTML = `<div style="grid-column:1/-1; font-size:12px; color:var(--muted); text-align:center; padding:8px;">No photos uploaded yet</div>`;
+        return;
+      }
+      el.innerHTML = list.map((item, idx) => `
+        <div class="mesh-thumb">
+          <img src="${item.thumb || ''}" alt="Mesh ${idx+1}" onclick="openZoomModal('${item.thumb || ''}')" />
+          <button class="mesh-del" onclick="deleteSifterPhoto('${lineKey}', ${idx})">✕</button>
+          ${item.imageUrl ? `<a class="mesh-drive-badge" href="${item.imageUrl}" target="_blank">Drive ↗</a>` : ''}
+        </div>
+      `).join("");
+    }
+
+    async function handleSifterUpload(event, lineKey) {
+      const files = Array.from(event.target.files || []);
+      if (!files.length) return;
+
+      const shift = getActiveShift();
+      ensureSifterObj(shift);
+      const lineLabel = lineKey === "line1" ? "Line 1" : "Line 2";
+
+      showLoader(`Uploading ${files.length} mesh photo(s)...`);
+      try {
+        for (let i = 0; i < files.length; i++) {
+          const fullDataUrl = await compressImage(files[i], 1600, 0.82);
+          const thumbDataUrl = await compressImage(files[i], 420, 0.72);
+          let imageUrl = "";
+
+          if (scriptUrl) {
+            const base64Data = fullDataUrl.split(",")[1];
+            const res = await fetch(scriptUrl, {
+              method: "POST",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify({
+                action: "upload_sifter_mesh",
+                shiftName: shift.name,
+                lineName: lineLabel,
+                mimeType: "image/jpeg",
+                imageBase64: base64Data
+              })
+            });
+            const json = await res.json();
+            if (json.status === "ok") imageUrl = json.imageUrl || "";
+          }
+
+          shift.sifterMesh[lineKey].push({
+            id: "mesh_" + Date.now() + "_" + i,
+            thumb: thumbDataUrl,
+            imageUrl
+          });
+        }
+        saveLocal();
+        syncToCloud();
+        renderSifterGrids();
+        showToast(scriptUrl ? "Mesh photo(s) saved to Drive!" : "Saved locally (connect Drive in ⚙ Settings)");
+      } catch (err) {
+        showToast("Upload error: " + err.message);
+      } finally {
+        hideLoader();
+        event.target.value = "";
+      }
+    }
+
+    function deleteSifterPhoto(lineKey, idx) {
+      if (!confirm("Remove this photo from the list?")) return;
+      getActiveShift().sifterMesh[lineKey].splice(idx, 1);
+      saveLocal();
+      syncToCloud();
+      renderSifterGrids();
+    }
+
+    // ==================== ZOOMABLE IMAGE MODAL ====================
+    function openZoomModal(src) {
+      if (!src) return;
+      const img = document.getElementById("zoomModalImg");
+      img.src = src;
+      currentZoom = 1;
+      applyZoom();
+      document.getElementById("zoomModal").classList.remove("hidden");
+    }
+
+    function closeZoomModal() {
+      document.getElementById("zoomModal").classList.add("hidden");
+    }
+
+    function changeZoom(delta) {
+      currentZoom = Math.min(4, Math.max(1, currentZoom + delta));
+      applyZoom();
+    }
+
+    function resetZoom() {
+      currentZoom = 1;
+      applyZoom();
+    }
+
+    function applyZoom() {
+      const img = document.getElementById("zoomModalImg");
+      img.style.width = (currentZoom * 100) + "%";
+      document.getElementById("zoomLevelText").textContent = Math.round(currentZoom * 100) + "%";
+    }
+
+    // ==================== CLOUD SYNC & SETTINGS ====================
     function openSettings() {
       document.getElementById("scriptUrlInput").value = scriptUrl;
       document.getElementById("settingsModal").classList.remove("hidden");
@@ -1110,10 +1584,14 @@
 
     function syncToCloud() {
       if (!scriptUrl) return;
-      const cleanShifts = shifts.map(s => ({
+      const cleanShifts = shifts.slice(0, MAX_SHIFTS_DISPLAY).map(s => ({
         ...s,
         line1: (s.line1 || []).map(w => ({ ...w, localPreview: "" })),
-        line2: (s.line2 || []).map(w => ({ ...w, localPreview: "" }))
+        line2: (s.line2 || []).map(w => ({ ...w, localPreview: "" })),
+        sifterMesh: s.sifterMesh ? {
+          line1: (s.sifterMesh.line1 || []).map(m => ({ id: m.id, imageUrl: m.imageUrl, thumb: "" })),
+          line2: (s.sifterMesh.line2 || []).map(m => ({ id: m.id, imageUrl: m.imageUrl, thumb: "" }))
+        } : { line1: [], line2: [] }
       }));
 
       fetch(scriptUrl, {
@@ -1130,7 +1608,7 @@
         const res = await fetch(scriptUrl + "?action=get_shifts");
         const json = await res.json();
         if (json.status === "ok" && Array.isArray(json.shifts) && json.shifts.length) {
-          shifts = json.shifts;
+          shifts = json.shifts.slice(0, MAX_SHIFTS_DISPLAY);
           saveLocal();
           if (currentView === "home") renderShiftsList();
           if (!silent) showToast("Synced from Drive!");
@@ -1161,7 +1639,7 @@
       t.textContent = msg;
       t.classList.remove("hidden");
       clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => t.classList.add("hidden"), 2800);
+      window._toastTimer = setTimeout(() => t.classList.add("hidden"), 3200);
     }
   </script>
 </body>

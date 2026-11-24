@@ -1,7 +1,7 @@
 {
   "name": "Work Order",
   "short_name": "Work Order",
-  "description": "Shift Work Order & Metal Detector WhatsApp Assistant",
+  "description": "Shift Work Order, Metal Detector & Sifter Mesh Assistant",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f1f5f9",
