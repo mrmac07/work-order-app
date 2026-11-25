@@ -3,1644 +3,1478 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#4f46e5" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Work Order" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
-  <link rel="apple-touch-icon" href="icon-512.png" />
-  <title>Work Order</title>
+  <meta name="theme-color" content="#075e54" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <title>WhatsApp Shift Report Generator</title>
   <style>
     :root {
+      --primary: #075e54;
+      --primary-light: #128c7e;
+      --accent: #25d366;
       --bg: #f1f5f9;
       --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
-      --border: #e2e8f0;
-      --primary: #4f46e5;
-      --primary-grad: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-      --line1-grad: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
-      --line2-grad: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
-      --md-grad: linear-gradient(135deg, #059669 0%, #10b981 100%);
-      --sifter-grad: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
-      --danger: #ef4444;
-      --radius: 18px;
-      --shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+      --border: #cbd5e1;
+      --danger: #dc2626;
+      --wa-bg: #efeae2;
+      --wa-bubble: #dcf8c6;
     }
-
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
-      padding-bottom: 40px;
+      padding-bottom: 92px;
     }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: var(--primary-grad);
+    header {
+      background: var(--primary);
       color: #fff;
       padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 4px 16px rgba(79, 70, 229, 0.25);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
     }
-    .topbar-left { display: flex; align-items: center; gap: 10px; }
-    .topbar h1 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
-    .topbar .sub { font-size: 12px; opacity: 0.88; display: block; margin-top: 1px; }
-    .icon-btn {
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: #fff;
-      width: 36px;
-      height: 36px;
-      border-radius: 11px;
-      font-size: 17px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-    .icon-btn:active { transform: scale(0.95); }
-
-    .container { max-width: 560px; margin: 0 auto; padding: 14px; }
-    .hidden { display: none !important; }
-
-    .btn {
-      width: 100%;
-      border: none;
-      border-radius: 14px;
-      padding: 13px 16px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: transform 0.12s ease, opacity 0.15s;
-    }
-    .btn:active { transform: scale(0.98); }
-    .btn-primary { background: var(--primary-grad); color: #fff; box-shadow: 0 6px 16px rgba(79, 70, 229, 0.28); }
-    .btn-soft { background: #eef2ff; color: var(--primary); }
-    .btn-success { background: var(--md-grad); color: #fff; }
-    .btn-outline { background: #fff; color: var(--text); border: 1.5px solid var(--border); }
-    .btn-sm { padding: 7px 11px; font-size: 12px; border-radius: 10px; width: auto; }
-
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 14px;
-      margin-bottom: 12px;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(226,232,240,0.8);
-    }
-
-    .shift-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: transform 0.15s;
-    }
-    .shift-card:active { transform: scale(0.985); }
-    .shift-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 999px;
-      margin-top: 5px;
-    }
-    .badge-day { background: #fef3c7; color: #b45309; }
-    .badge-night { background: #e0e7ff; color: #3730a3; }
-    .shift-meta { font-size: 12px; color: var(--muted); margin-top: 5px; }
-    .delete-btn {
-      background: #fee2e2;
-      color: var(--danger);
-      border: none;
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      font-size: 15px;
-      cursor: pointer;
-    }
-
-    .tile-grid { display: grid; gap: 12px; margin-top: 6px; }
-    .tile {
-      border-radius: 18px;
-      padding: 18px 18px;
-      color: #fff;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.13);
-    }
-    .tile:active { transform: scale(0.98); }
-    .tile-l1 { background: var(--line1-grad); }
-    .tile-l2 { background: var(--line2-grad); }
-    .tile-md { background: var(--md-grad); }
-    .tile-sifter { background: var(--sifter-grad); }
-    .tile h2 { margin: 0; font-size: 19px; font-weight: 700; }
-    .tile p { margin: 3px 0 0; font-size: 12.5px; opacity: 0.92; }
-    .tile-icon { font-size: 28px; background: rgba(255,255,255,0.2); width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
-
-    .wo-tabs {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-      margin-bottom: 10px;
-    }
-    .wo-pill {
-      padding: 7px 13px;
-      border-radius: 999px;
-      border: 1.5px solid var(--border);
-      background: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--muted);
-      white-space: nowrap;
-      cursor: pointer;
-    }
-    .wo-pill.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-    .wo-pill.add-pill { background: #ecfeff; color: #0891b2; border-color: #a5f3fc; }
-
-    /* Compact Scan Bar */
-    .scan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-    .scan-box {
-      border: 1.5px dashed #cbd5e1;
-      border-radius: 12px;
-      padding: 9px 10px;
-      cursor: pointer;
-      background: #f8fafc;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-    .scan-box:active { background: #eef2ff; }
-    .scan-box span { font-size: 16px; }
-
-    /* Inline Zoomable / Scrollable Photo Box */
-    .preview-img-wrap {
-      position: relative;
-      margin-bottom: 10px;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: #0f172a;
-    }
-    .preview-scroll-box {
-      width: 100%;
-      height: 170px;
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: zoom-in;
-    }
-    .preview-scroll-box img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-    }
-    .preview-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 10px;
-      background: rgba(15, 23, 42, 0.9);
-      color: #fff;
-      font-size: 11px;
-    }
-    .preview-actions button, .preview-actions a {
-      background: rgba(255,255,255,0.16);
-      color: #fff;
-      border: none;
-      padding: 4px 9px;
-      border-radius: 7px;
-      font-size: 11px;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .kv-row {
-      display: grid;
-      grid-template-columns: 112px 1fr;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 0;
-      border-bottom: 1px solid #f1f5f9;
-    }
-    .kv-row:last-child { border-bottom: none; }
-    .kv-label { font-size: 12.5px; font-weight: 700; color: #334155; }
-    .kv-input, select {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-size: 13.5px;
-      color: var(--text);
-      background: #f8fafc;
-      font-family: inherit;
-    }
-    .kv-input:focus, select:focus { outline: none; border-color: var(--primary); background: #fff; }
-    .split-inputs { display: grid; grid-template-columns: 1.4fr 1fr; gap: 6px; }
-
-    .check-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-top: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #1e293b;
-      cursor: pointer;
-    }
-    .check-row input[type="checkbox"] { width: 17px; height: 17px; accent-color: var(--primary); }
-
-    .seg-toggle {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      background: #e2e8f0;
-      padding: 3px;
-      border-radius: 11px;
-      margin: 10px 0;
-    }
-    .seg-btn {
-      border: none;
-      background: transparent;
-      padding: 8px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 13.5px;
-      color: var(--muted);
-      cursor: pointer;
-    }
-    .seg-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-
-    .msg-box {
-      background: #0f172a;
-      color: #f8fafc;
-      border-radius: 16px;
-      overflow: hidden;
-      margin-top: 12px;
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
-    }
-    .msg-header {
-      background: #1e293b;
-      padding: 9px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      color: #94a3b8;
-      font-weight: 600;
-    }
-    .copy-btn {
-      background: rgba(255,255,255,0.12);
-      border: none;
-      color: #fff;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .copy-btn.copied { background: #10b981; }
-    .msg-body {
-      padding: 13px;
-      white-space: pre-wrap;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 12.5px;
-      line-height: 1.5;
+    header h1 {
       margin: 0;
-      word-break: break-word;
-    }
-
-    /* Sifter Mesh Photo Grid */
-    .mesh-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .mesh-thumb {
-      position: relative;
-      border-radius: 10px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      aspect-ratio: 1 / 1;
-      background: #f1f5f9;
-    }
-    .mesh-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      cursor: zoom-in;
-    }
-    .mesh-del {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      background: rgba(239, 68, 68, 0.9);
-      color: #fff;
-      border: none;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      font-size: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .mesh-drive-badge {
-      position: absolute;
-      bottom: 4px;
-      left: 4px;
-      background: rgba(15, 23, 42, 0.78);
-      color: #fff;
-      font-size: 9px;
-      padding: 2px 5px;
-      border-radius: 5px;
-      text-decoration: none;
-    }
-
-    /* Fullscreen Zoomable Image Modal */
-    .zoom-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.94);
-      z-index: 400;
-      display: flex;
-      flex-direction: column;
-    }
-    .zoom-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 14px;
-      background: rgba(15, 23, 42, 0.9);
-      color: #fff;
-      gap: 8px;
-    }
-    .zoom-controls { display: flex; gap: 6px; align-items: center; }
-    .zoom-btn {
-      background: rgba(255,255,255,0.18);
-      color: #fff;
-      border: none;
-      padding: 7px 12px;
-      border-radius: 9px;
-      font-size: 14px;
+      font-size: 1.05rem;
       font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+    .btn-reset {
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 13px;
+      font-size: 0.85rem;
+      font-weight: 600;
       cursor: pointer;
     }
-    .zoom-viewport {
-      flex: 1;
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
+    .btn-reset:active {
+      opacity: 0.85;
+    }
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
       padding: 12px;
     }
-    .zoom-viewport img {
-      transform-origin: top left;
-      display: block;
-      margin: auto;
-      transition: width 0.15s ease;
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e2e8f0;
     }
-
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0;
+    }
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 2px rgba(18, 140, 126, 0.15);
+    }
+    textarea {
+      resize: none;
+      overflow: hidden;
+      min-height: 40px;
+      line-height: 1.4;
+    }
+    .bubble-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .bubble {
+      border: 1.5px solid var(--border);
+      background: #f8fafc;
+      color: var(--text);
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+    .bubble.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .segmented {
+      display: flex;
+      background: #e2e8f0;
+      padding: 3px;
+      border-radius: 9px;
+      gap: 3px;
+    }
+    .seg-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 7px 10px;
+      border-radius: 7px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+    }
+    .seg-btn.active {
+      background: #fff;
+      color: var(--primary);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    .badge-calc {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .remark-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      margin-bottom: 8px;
+    }
+    .remark-num {
+      min-width: 26px;
+      height: 36px;
+      background: #e2e8f0;
+      color: #334155;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+    .btn-icon-del {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: none;
+      border-radius: 7px;
+      width: 34px;
+      height: 36px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .btn-add {
+      background: #f1f5f9;
+      color: var(--primary);
+      border: 1px dashed var(--primary-light);
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 2px;
+    }
+    .wo-box {
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+    .wo-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .wo-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .wo-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .btn-done {
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #475569;
+      border-radius: 6px;
+      padding: 4px 9px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-done.completed {
+      background: #16a34a;
+      border-color: #16a34a;
+      color: #fff;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .checkbox-row input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+    .checkbox-row span {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .preview-card {
+      background: var(--wa-bg);
+      border: 1px solid #d6cfc2;
+    }
+    .preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .btn-copy-sm {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .wa-message {
+      background: var(--wa-bubble);
+      border-radius: 10px;
+      padding: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #111b21;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+      margin-top: 10px;
+    }
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      padding: 10px 14px;
+      display: flex;
+      gap: 10px;
+      z-index: 40;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+    }
+    .bottom-bar button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-copy-main {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-wa-main {
+      background: var(--accent);
+      color: #064e3b;
+    }
     .modal-backdrop {
       position: fixed;
       inset: 0;
       background: rgba(15, 23, 42, 0.55);
-      backdrop-filter: blur(4px);
-      z-index: 100;
-      display: flex;
-      align-items: flex-end;
+      display: none;
+      align-items: center;
       justify-content: center;
+      z-index: 100;
+      padding: 16px;
     }
-    .modal-sheet {
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-box {
       background: #fff;
+      border-radius: 14px;
+      padding: 18px;
+      max-width: 340px;
       width: 100%;
-      max-width: 560px;
-      border-radius: 24px 24px 0 0;
-      padding: 22px 20px 30px;
-      animation: slideUp 0.2s ease;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     }
-    @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
+    .modal-box h3 {
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+    .modal-box p {
+      margin: 0 0 16px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .modal-btns {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .modal-btns button {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-cancel {
+      background: #e2e8f0;
+      color: #334155;
+    }
+    .btn-confirm-reset {
+      background: #dc2626;
+      color: #fff;
+    }
     .toast {
       position: fixed;
-      bottom: 24px;
+      top: 66px;
       left: 50%;
       transform: translateX(-50%);
       background: #0f172a;
       color: #fff;
-      padding: 10px 16px;
-      border-radius: 16px;
-      font-size: 13px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.85rem;
       font-weight: 600;
-      z-index: 500;
-      max-width: 90%;
-      text-align: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 90;
     }
-
-    .loader-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.65);
-      z-index: 300;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      gap: 12px;
-      font-weight: 600;
+    .toast.show {
+      opacity: 1;
     }
-    .spinner {
-      width: 42px; height: 42px;
-      border: 4px solid rgba(255,255,255,0.25);
-      border-top-color: #38bdf8;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .pill-info {
-      background: #f0fdf4;
-      color: #166534;
-      border: 1px solid #bbf7d0;
-      border-radius: 10px;
-      padding: 7px 11px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-top: 6px;
-    }
-    .hint-text { font-size: 11px; color: var(--muted); margin-top: 3px; }
+    .mt-8 { margin-top: 8px; }
+    .mt-10 { margin-top: 10px; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <header class="topbar">
-    <div class="topbar-left">
-      <button id="backBtn" class="icon-btn hidden" onclick="goBack()">←</button>
-      <div>
-        <h1 id="headerTitle">Work Order</h1>
-        <span id="headerSub" class="sub">Shift & WhatsApp Assistant</span>
-      </div>
-    </div>
-    <div style="display:flex; gap:8px;">
-      <button class="icon-btn" title="Sync from Drive" onclick="syncFromCloud()">↻</button>
-      <button class="icon-btn" title="Settings" onclick="openSettings()">⚙</button>
-    </div>
+  <header>
+    <h1>Shift Report Generator</h1>
+    <button type="button" class="btn-reset" onclick="openResetModal()">Reset</button>
   </header>
 
-  <main class="container">
+  <div id="toast" class="toast">Copied to clipboard!</div>
 
-    <!-- VIEW 1: HOME (SHIFTS - MAX 30) -->
-    <section id="view-home">
-      <button class="btn btn-primary" style="margin-bottom:14px;" onclick="openNewShiftModal()">
-        ＋ Add New Shift
-      </button>
-      <div id="shiftsList"></div>
-    </section>
+  <div class="container">
 
-    <!-- VIEW 2: SHIFT HUB -->
-    <section id="view-shift" class="hidden">
-      <div class="tile-grid">
-        <div class="tile tile-l1" onclick="openLine('line1')">
-          <div>
-            <h2>Line 1</h2>
-            <p id="hubL1Summary">No work orders yet</p>
-          </div>
-          <div class="tile-icon">📦</div>
+    <!-- Date, Location & Shift -->
+    <div class="card">
+      <div class="grid-2">
+        <div>
+          <label for="reportDate">Date</label>
+          <input type="date" id="reportDate" onchange="onDateChange()" />
         </div>
-
-        <div class="tile tile-l2" onclick="openLine('line2')">
-          <div>
-            <h2>Line 2</h2>
-            <p id="hubL2Summary">No work orders yet</p>
+        <div>
+          <label>Location</label>
+          <div class="bubble-group" id="locationBubbles">
+            <button type="button" class="bubble" data-val="Pioneer" onclick="setLocation('Pioneer')">Pioneer</button>
+            <button type="button" class="bubble" data-val="Tuas" onclick="setLocation('Tuas')">Tuas</button>
           </div>
-          <div class="tile-icon">🏭</div>
-        </div>
-
-        <div class="tile tile-md" onclick="openMD()">
-          <div>
-            <h2>Metal Detector</h2>
-            <p id="hubMdSummary">Generate MD verification messages</p>
-          </div>
-          <div class="tile-icon">🧲</div>
-        </div>
-
-        <div class="tile tile-sifter" onclick="openSifter()">
-          <div>
-            <h2>Sifter Mesh</h2>
-            <p id="hubSifterSummary">Upload Line 1 & Line 2 mesh photos</p>
-          </div>
-          <div class="tile-icon">🕸️</div>
         </div>
       </div>
-    </section>
-
-    <!-- VIEW 3: LINE 1 / LINE 2 -->
-    <section id="view-line" class="hidden">
-      <div id="woTabs" class="wo-tabs"></div>
-
-      <div class="card">
-        <!-- Compact Scan Bar -->
-        <div class="scan-grid">
-          <label class="scan-box">
-            <span>📷</span>Take Photo
-            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event)" />
-          </label>
-          <label class="scan-box">
-            <span>🖼️</span>Upload Image
-            <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event)" />
-          </label>
-        </div>
-
-        <!-- Zoomable / Scrollable Photo Preview -->
-        <div id="woImgPreviewWrap" class="preview-img-wrap hidden">
-          <div class="preview-scroll-box" onclick="openZoomModal(document.getElementById('woImgPreview').src)">
-            <img id="woImgPreview" alt="Work Order Preview" />
-          </div>
-          <div class="preview-actions">
-            <span>Tap photo to zoom & scroll</span>
-            <div style="display:flex; gap:6px;">
-              <button type="button" onclick="openZoomModal(document.getElementById('woImgPreview').src)">🔍 Zoom</button>
-              <a id="woDriveLink" class="hidden" target="_blank">Drive ↗</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="kv-row">
-          <div class="kv-label">W/O:</div>
-          <div class="split-inputs">
-            <input id="fOrderNo" class="kv-input" placeholder="PRD26-0697" oninput="onFieldChange()" />
-            <input id="fCustomer" class="kv-input" placeholder="CC030" oninput="onFieldChange()" />
-          </div>
-        </div>
-
-        <div class="kv-row">
-          <div class="kv-label">Lot No.:</div>
-          <input id="fLotPrefix" class="kv-input" placeholder="REG11954B" oninput="onFieldChange()" />
-        </div>
-
-        <div class="kv-row">
-          <div class="kv-label">Product:</div>
-          <input id="fProduct" class="kv-input" placeholder="GOLD LEAF WPC - ZEN" oninput="onFieldChange()" />
-        </div>
-
-        <div class="kv-row">
-          <div class="kv-label">Origin:</div>
-          <input id="fOrigin" class="kv-input" placeholder="Optional (e.g. CHILE)" oninput="onFieldChange()" />
-        </div>
-
-        <div class="kv-row">
-          <div class="kv-label">Total Qty (MT):</div>
-          <div class="split-inputs">
-            <input id="fTotalQty" type="number" step="0.1" class="kv-input" placeholder="150" oninput="onFieldChange()" />
-            <input id="fBatchSize" type="number" step="0.1" class="kv-input" placeholder="1.2 MT/b" title="MT per batch" oninput="onFieldChange()" />
-          </div>
-        </div>
-
-        <div id="batchSummaryPill" class="pill-info hidden"></div>
-
-        <!-- NEW vs CONTINUE -->
-        <div class="seg-toggle">
-          <button id="btnModeNew" class="seg-btn active" onclick="setWoMode('new')">✨ New</button>
-          <button id="btnModeCont" class="seg-btn" onclick="setWoMode('continue')">🔄 Continue</button>
-        </div>
-
-        <!-- Shared W/O Checkbox -->
-        <label class="check-row">
-          <input type="checkbox" id="fSharedWo" onchange="onFieldChange()" />
-          <span>Both lines share same W/O</span>
-        </label>
-
-        <!-- Completed Batches & Balance Box (shown for Continue OR Shared W/O) -->
-        <div id="balanceBox" class="hidden" style="margin-top:8px;">
-          <div class="kv-row">
-            <div class="kv-label">Completed:</div>
-            <div>
-              <input id="fCompletedInput" class="kv-input" placeholder="e.g. 10  or  110-120  or  1-25, 45-48" oninput="onFieldChange()" />
-              <div class="hint-text">Enter batch count (10) or ranges (1-25, 45-48, 110-125)</div>
-            </div>
-          </div>
-          <div id="completedBreakdownPill" class="pill-info hidden" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe;"></div>
-          <div class="kv-row">
-            <div class="kv-label">Balance (MT):</div>
-            <input id="fRemaining" type="number" step="0.1" class="kv-input" placeholder="Auto-calculated" oninput="onFieldChange(true)" />
-          </div>
-        </div>
-
-        <!-- Starting Batch Indicator -->
-        <label class="check-row">
-          <input type="checkbox" id="fShowStartBatch" onchange="onFieldChange()" />
-          <span>Indicate starting batch (e.g. B031)</span>
-        </label>
-        <div id="startBatchBox" class="hidden" style="margin-top:6px;">
-          <div class="kv-row">
-            <div class="kv-label">Starts From #:</div>
-            <input id="fStartBatch" type="number" class="kv-input" placeholder="e.g. 31 → B031" oninput="onFieldChange()" />
-          </div>
-        </div>
-
-        <button class="btn btn-soft" style="margin-top:12px;" onclick="saveAndLogWo()">
-          ☁️ Save & Log to Google Sheet
-        </button>
-      </div>
-
-      <!-- ChatGPT-style Copyable Message -->
-      <div class="msg-box">
-        <div class="msg-header">
-          <span>WhatsApp Message</span>
-          <button id="copyWoBtn" class="copy-btn" onclick="copyText('woMsgPreview', 'copyWoBtn')">
-            📋 Copy
-          </button>
-        </div>
-        <pre id="woMsgPreview" class="msg-body"></pre>
-      </div>
-    </section>
-
-    <!-- VIEW 4: METAL DETECTOR -->
-    <section id="view-md" class="hidden">
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <label style="font-weight:700; color:#2563eb; display:flex; align-items:center; gap:8px;">
-            <input type="checkbox" id="mdL1Enabled" checked onchange="renderMdMessage()" />
-            Line 1
-          </label>
-          <button class="btn btn-outline btn-sm" onclick="setRoundedTime('mdL1Time')">↻ Now</button>
-        </div>
-        <div class="kv-row">
-          <div class="kv-label">Work Order:</div>
-          <select id="mdL1Select" onchange="renderMdMessage()"></select>
-        </div>
-        <div class="kv-row">
-          <div class="kv-label">Batch No.:</div>
-          <input id="mdL1Batch" type="number" class="kv-input" placeholder="e.g. 57 → B057" oninput="renderMdMessage()" />
-        </div>
-        <div class="kv-row">
-          <div class="kv-label">Time:</div>
-          <input id="mdL1Time" type="time" class="kv-input" oninput="renderMdMessage()" />
+      <div class="mt-10">
+        <label>Shift</label>
+        <div class="bubble-group" id="shiftBubbles">
+          <button type="button" class="bubble" data-val="Morning" onclick="setShift('Morning')">Morning</button>
+          <button type="button" class="bubble" data-val="Night" onclick="setShift('Night')">Night</button>
         </div>
       </div>
-
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <label style="font-weight:700; color:#9333ea; display:flex; align-items:center; gap:8px;">
-            <input type="checkbox" id="mdL2Enabled" checked onchange="renderMdMessage()" />
-            Line 2
-          </label>
-          <button class="btn btn-outline btn-sm" onclick="setRoundedTime('mdL2Time')">↻ Now</button>
-        </div>
-        <div class="kv-row">
-          <div class="kv-label">Work Order:</div>
-          <select id="mdL2Select" onchange="renderMdMessage()"></select>
-        </div>
-        <div class="kv-row">
-          <div class="kv-label">Batch No.:</div>
-          <input id="mdL2Batch" type="number" class="kv-input" placeholder="e.g. 81 → B081" oninput="renderMdMessage()" />
-        </div>
-        <div class="kv-row">
-          <div class="kv-label">Time:</div>
-          <input id="mdL2Time" type="time" class="kv-input" oninput="renderMdMessage()" />
-        </div>
-      </div>
-
-      <div class="msg-box">
-        <div class="msg-header">
-          <span>MD Verification Message</span>
-          <button id="copyMdBtn" class="copy-btn" onclick="copyText('mdMsgPreview', 'copyMdBtn')">
-            📋 Copy
-          </button>
-        </div>
-        <pre id="mdMsgPreview" class="msg-body"></pre>
-      </div>
-
-      <button class="btn btn-success" style="margin-top:14px;" onclick="logMdToSheet()">
-        ✅ Save MD Test to History & Drive
-      </button>
-
-      <div id="mdHistoryBox" class="card hidden" style="margin-top:14px;">
-        <div style="font-weight:700; margin-bottom:8px; font-size:14px;">Recent MD Logs (This Shift)</div>
-        <div id="mdHistoryList" style="font-size:12px; color:var(--muted);"></div>
-      </div>
-    </section>
-
-    <!-- VIEW 5: SIFTER MESH PICTURES -->
-    <section id="view-sifter" class="hidden">
-      <!-- Line 1 Sifter Mesh -->
-      <div class="card">
-        <div style="font-weight:700; color:#2563eb; font-size:15px; margin-bottom:10px;">📦 Line 1 — Sifter Mesh Photos</div>
-        <div class="scan-grid">
-          <label class="scan-box">
-            <span>📷</span>Take Photo
-            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleSifterUpload(event, 'line1')" />
-          </label>
-          <label class="scan-box">
-            <span>🖼️</span>Upload Photos
-            <input type="file" accept="image/*" multiple class="hidden" onchange="handleSifterUpload(event, 'line1')" />
-          </label>
-        </div>
-        <div id="sifterGridL1" class="mesh-grid"></div>
-      </div>
-
-      <!-- Line 2 Sifter Mesh -->
-      <div class="card">
-        <div style="font-weight:700; color:#9333ea; font-size:15px; margin-bottom:10px;">🏭 Line 2 — Sifter Mesh Photos</div>
-        <div class="scan-grid">
-          <label class="scan-box">
-            <span>📷</span>Take Photo
-            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleSifterUpload(event, 'line2')" />
-          </label>
-          <label class="scan-box">
-            <span>🖼️</span>Upload Photos
-            <input type="file" accept="image/*" multiple class="hidden" onchange="handleSifterUpload(event, 'line2')" />
-          </label>
-        </div>
-        <div id="sifterGridL2" class="mesh-grid"></div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- FULLSCREEN ZOOM MODAL -->
-  <div id="zoomModal" class="zoom-modal hidden">
-    <div class="zoom-toolbar">
-      <div class="zoom-controls">
-        <button class="zoom-btn" onclick="changeZoom(-0.5)">－</button>
-        <span id="zoomLevelText" style="font-size:13px; min-width:44px; text-align:center;">100%</span>
-        <button class="zoom-btn" onclick="changeZoom(0.5)">＋</button>
-        <button class="zoom-btn" onclick="resetZoom()">Reset</button>
-      </div>
-      <button class="zoom-btn" style="background:#ef4444;" onclick="closeZoomModal()">✕ Close</button>
     </div>
-    <div id="zoomViewport" class="zoom-viewport">
-      <img id="zoomModalImg" alt="Zoomed Image" />
+
+    <!-- LINE 1 -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Line-1 Details</h2>
+        <div class="segmented" style="width: 190px;">
+          <button type="button" class="seg-btn" id="l1StatusActive" onclick="setLineStatus(1, 'active')">Active</button>
+          <button type="button" class="seg-btn" id="l1StatusNoProd" onclick="setLineStatus(1, 'noprod')">No Prod.</button>
+        </div>
+      </div>
+
+      <div id="l1Body">
+        <div class="grid-3">
+          <div>
+            <label for="l1Dumping">Dumping Ops</label>
+            <input type="number" id="l1Dumping" min="0" oninput="onInputChange()" />
+          </div>
+          <div>
+            <label for="l1Packing">Packing Ops</label>
+            <input type="number" id="l1Packing" min="0" oninput="onInputChange()" />
+          </div>
+          <div>
+            <label>Total Ops</label>
+            <input type="text" id="l1TotalOps" readonly style="background:#f1f5f9; font-weight:700;" />
+          </div>
+        </div>
+
+        <div class="mt-10">
+          <label>Output Stage</label>
+          <div class="segmented">
+            <button type="button" class="seg-btn" id="l1StageCurrent" onclick="setOutputStage(1, 'current')">Current Output</button>
+            <button type="button" class="seg-btn" id="l1StageFinal" onclick="setOutputStage(1, 'final')">Final Output</button>
+          </div>
+        </div>
+
+        <div class="grid-2 mt-10">
+          <div>
+            <label for="l1Target">Target Output (MT)</label>
+            <input type="number" id="l1Target" step="0.001" oninput="onInputChange()" />
+          </div>
+          <div>
+            <label for="l1Actual" id="l1ActualLabel">Current Output (MT)</label>
+            <input type="number" id="l1Actual" step="0.001" placeholder="e.g. 29.900" oninput="onInputChange()" />
+          </div>
+        </div>
+
+        <div class="grid-2 mt-10">
+          <div>
+            <label for="l1StartTime">Start Time</label>
+            <input type="text" id="l1StartTime" placeholder="0800am" oninput="onInputChange()" />
+          </div>
+          <div>
+            <label for="l1EndTime">End Time</label>
+            <input type="text" id="l1EndTime" placeholder="0800pm" oninput="onInputChange()" />
+          </div>
+        </div>
+
+        <div class="grid-2 mt-10">
+          <div>
+            <label for="l1RunHrs">Prod. Running (Hrs)</label>
+            <input type="number" id="l1RunHrs" min="0" placeholder="8" oninput="onInputChange()" />
+          </div>
+          <div>
+            <label for="l1RunMins">Prod. Running (Mins)</label>
+            <input type="number" id="l1RunMins" min="0" max="59" placeholder="0" oninput="onInputChange()" />
+          </div>
+        </div>
+
+        <div class="badge-calc" id="l1CalcBadge">
+          <span id="l1VarDisplay">Balance Output: 0.000MT</span>
+          <span id="l1EffDisplay">Efficiency: 0.000MT/hr</span>
+        </div>
+      </div>
+
+      <div class="mt-10">
+        <label>Line-1 Remarks</label>
+        <div id="l1RemarksList"></div>
+        <button type="button" class="btn-add" onclick="addRemark(1)">+ Add Remark</button>
+      </div>
     </div>
+
+    <!-- LINE 2 -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Line-2 Details</h2>
+        <div class="segmented" style="width: 190px;">
+          <button type="button" class="seg-btn" id="l2StatusActive" onclick="setLineStatus(2, 'active')">Active</button>
+          <button type="button" class="seg-btn" id="l2StatusNoProd" onclick="setLineStatus(2, 'noprod')">No Prod.</button>
+        </div>
+      </div>
+
+      <div id="l2Body">
+        <div class="grid-3">
+          <div>
+            <label for="l2Dumping">Dumping Ops</label>
+            <input type="number" id="l2Dumping" min="0" oninput="onInputChange()" />
+          </div>
+          <div>
+            <label for="l2Packing">Packing Ops</label>
+            <input type="number" id="l2Packing" min="0" oninput="onInputChange()" />
+          </div>
+          <div>
+            <label>Total Ops</label>
+            <input type="text" id="l2TotalOps" readonly style="background:#f1f5f9; font-weight:700;" />
+          </div>
+        </div>
+
+        <div class="mt-10">
+          <label>Output Stage</label>
+          <div class="segmented">
+            <button type="button" class="seg-btn" id="l2StageCurrent" onclick="setOutputStage(2, 'current')">Current Output</button>
+            <button type="button" class="seg-btn" id="l2StageFinal" onclick="setOutputStage(2, 'final')">Final Output</button>
+          </div>
+        </div>
+
+        <div class="grid-2 mt-10">
+          <div>
+            <label for="l2Target">Target Output (MT)</label>
+            <input type="number" id="l2Target" step="0.001" oninput="onInputChange()" />
+          </div>
+          <div>
+            <label for="l2Actual" id="l2ActualLabel">Current Output (MT)</label>
+            <input type="number" id="l2Actual" step="0.001" placeholder="e.g. 15.000" oninput="onInputChange()" />
+          </div>
+        </div>
+
+        <div class="grid-2 mt-10">
+          <div>
+            <label for="l2StartTime">Start Time</label>
+            <input type="text" id="l2StartTime" placeholder="0800am" oninput="onInputChange()" />
+          </div>
+          <div>
+            <label for="l2EndTime">End Time</label>
+            <input type="text" id="l2EndTime" placeholder="0800pm" oninput="onInputChange()" />
+          </div>
+        </div>
+
+        <div class="grid-2 mt-10">
+          <div>
+            <label for="l2RunHrs">Prod. Running (Hrs)</label>
+            <input type="number" id="l2RunHrs" min="0" placeholder="8" oninput="onInputChange()" />
+          </div>
+          <div>
+            <label for="l2RunMins">Prod. Running (Mins)</label>
+            <input type="number" id="l2RunMins" min="0" max="59" placeholder="0" oninput="onInputChange()" />
+          </div>
+        </div>
+
+        <div class="badge-calc" id="l2CalcBadge">
+          <span id="l2VarDisplay">Balance Output: 0.000MT</span>
+          <span id="l2EffDisplay">Efficiency: 0.000MT/hr</span>
+        </div>
+      </div>
+
+      <div class="mt-10">
+        <label>Line-2 Remarks</label>
+        <div id="l2RemarksList"></div>
+        <button type="button" class="btn-add" onclick="addRemark(2)">+ Add Remark</button>
+      </div>
+
+      <label class="checkbox-row mt-10">
+        <input type="checkbox" id="showTotalOutput" onchange="onInputChange()" />
+        <span>Include Total Output Line (Right after Line-2)</span>
+      </label>
+    </div>
+
+    <!-- Batching & Labelling -->
+    <div class="card">
+      <h2 class="card-title" style="margin-bottom: 10px;">Batching & Labelling</h2>
+      <div>
+        <label for="batchingInput">Batching Operators</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="batchingInput" placeholder="e.g. 05 Operators or 3 Contract" oninput="onInputChange()" />
+          <button type="button" class="bubble" id="batchingNilBtn" onclick="toggleBatchingNil()">Nil</button>
+        </div>
+      </div>
+      <div class="mt-10">
+        <label for="labellingInput">Labelling Details</label>
+        <textarea id="labellingInput" rows="1" placeholder="e.g. WO: PRD26-0759 (4000pcs)" oninput="autoResize(this); onInputChange()"></textarea>
+      </div>
+    </div>
+
+    <!-- Supervisors, QC & Leave -->
+    <div class="card">
+      <h2 class="card-title" style="margin-bottom: 10px;">Supervisors, QC & Leave</h2>
+      <div>
+        <label>Production Supervisors (Multi-Select)</label>
+        <div class="bubble-group" id="supBubbles"></div>
+      </div>
+      <div class="mt-10">
+        <label>QC Personnel (Multi-Select)</label>
+        <div class="bubble-group" id="qcBubbles"></div>
+      </div>
+      <div class="mt-10">
+        <div class="card-header" style="margin-bottom: 6px;">
+          <label style="margin:0;">Leave / Attendance</label>
+          <button type="button" class="bubble" id="allPresentBtn" onclick="toggleAllPresent()">All Present</button>
+        </div>
+        <textarea id="leaveInput" rows="2" placeholder="Enter names & leave types (e.g. Gan Chi Hui - AL)" oninput="autoResize(this); onLeaveTextChange()"></textarea>
+      </div>
+    </div>
+
+    <!-- Product & WO Details -->
+    <div class="card">
+      <h2 class="card-title" style="margin-bottom: 10px;">Product & WO Details</h2>
+
+      <label>Line 1 Products / WOs</label>
+      <div id="l1WoList"></div>
+      <button type="button" class="btn-add" onclick="addWo(1)">+ Add Line 1 WO</button>
+
+      <div class="mt-10">
+        <label>Line 2 Products / WOs</label>
+        <div id="l2WoList"></div>
+        <button type="button" class="btn-add" onclick="addWo(2)">+ Add Line 2 WO</button>
+      </div>
+    </div>
+
+    <!-- Sender Sign-Off -->
+    <div class="card">
+      <h2 class="card-title" style="margin-bottom: 8px;">Sender Sign-Off</h2>
+      <div class="bubble-group" id="senderBubbles"></div>
+      <div class="mt-8">
+        <input type="text" id="senderCustom" placeholder="Or type custom sign-off name..." oninput="onInputChange()" />
+      </div>
+    </div>
+
+    <!-- WhatsApp Message Preview -->
+    <div class="card preview-card">
+      <div class="preview-header">
+        <h2 class="card-title" style="margin:0;">WhatsApp Preview</h2>
+        <button type="button" class="btn-copy-sm" onclick="copyReport()">Copy</button>
+      </div>
+
+      <div class="segmented">
+        <button type="button" class="seg-btn" id="modeStartBtn" onclick="setPreviewMode('start')">Start of Shift</button>
+        <button type="button" class="seg-btn" id="modeIntervalBtn" onclick="setPreviewMode('interval')">Interval / Final</button>
+      </div>
+
+      <div class="wa-message" id="previewBox"></div>
+    </div>
+
   </div>
 
-  <!-- MODAL: NEW SHIFT -->
-  <div id="newShiftModal" class="modal-backdrop hidden" onclick="closeModalOnBg(event, 'newShiftModal')">
-    <div class="modal-sheet">
-      <h2 style="margin:0 0 14px; font-size:19px;">Create New Shift</h2>
-      <div class="kv-row">
-        <div class="kv-label">Date:</div>
-        <input id="newShiftDate" type="date" class="kv-input" />
-      </div>
-      <div class="seg-toggle" style="margin:14px 0 18px;">
-        <button id="shiftTypeDay" class="seg-btn active" onclick="selectShiftType('Day shift')">☀️ Day shift</button>
-        <button id="shiftTypeNight" class="seg-btn" onclick="selectShiftType('Night shift')">🌙 Night shift</button>
-      </div>
-      <button class="btn btn-primary" onclick="createShift()">Create Shift</button>
-    </div>
+  <!-- Bottom Sticky Actions -->
+  <div class="bottom-bar">
+    <button type="button" class="btn-copy-main" onclick="copyReport()">Copy Report</button>
+    <button type="button" class="btn-wa-main" onclick="shareWhatsApp()">Send to WhatsApp</button>
   </div>
 
-  <!-- MODAL: SETTINGS -->
-  <div id="settingsModal" class="modal-backdrop hidden" onclick="closeModalOnBg(event, 'settingsModal')">
-    <div class="modal-sheet">
-      <h2 style="margin:0 0 10px; font-size:19px;">Google Drive Connection</h2>
-      <p style="font-size:13px; color:var(--muted); margin:0 0 14px;">
-        Paste your deployed Google Apps Script Web App URL below to enable Drive image saving, Gemini OCR, and Sheet backup.
-      </p>
-      <input id="scriptUrlInput" class="kv-input" placeholder="https://script.google.com/macros/s/.../exec" style="margin-bottom:14px;" />
-      <button class="btn btn-primary" onclick="saveSettings()">Save URL</button>
+  <!-- Reset Confirmation Modal -->
+  <div class="modal-backdrop" id="resetModal">
+    <div class="modal-box">
+      <h3>Reset Shift Report?</h3>
+      <p>Do you want to clear every filled detail and restore default values for a new shift?</p>
+      <div class="modal-btns">
+        <button type="button" class="btn-cancel" onclick="closeResetModal()">Cancel</button>
+        <button type="button" class="btn-confirm-reset" onclick="confirmReset()">Yes, Clear All</button>
+      </div>
     </div>
   </div>
-
-  <div id="loader" class="loader-overlay hidden">
-    <div class="spinner"></div>
-    <div id="loaderText">Working...</div>
-  </div>
-  <div id="toast" class="toast hidden"></div>
 
   <script>
-    const STORAGE_KEY = "wo_app_shifts_v1";
-    const URL_KEY = "wo_app_script_url";
-    const MAX_SHIFTS_DISPLAY = 30;
+    const STORAGE_KEY = "anbros_shift_report_v3";
+    const SUPERVISORS = ["Balaji", "Anson", "Chi Hui"];
+    const QCS = ["Mohan", "Kishore", "Vidhya", "Kirthana"];
+    const SENDER_OPTIONS = ["N. Balaji", "Anson", "Chi Hui"];
 
-    let shifts = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    let scriptUrl = localStorage.getItem(URL_KEY) || "";
-    let currentView = "home";
-    let activeShiftId = null;
-    let activeLineKey = "line1";
-    let activeWoIdx = 0;
-    let newShiftType = "Day shift";
-    let currentZoom = 1;
-
-    window.addEventListener("DOMContentLoaded", () => {
-      renderShiftsList();
-      if (scriptUrl) syncFromCloud(true);
-    });
-
-    function saveLocal() {
-      // Keep max 30 shifts locally to stay fast & clean
-      if (shifts.length > MAX_SHIFTS_DISPLAY) shifts = shifts.slice(0, MAX_SHIFTS_DISPLAY);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(shifts));
+    function getTodayISO() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, "0");
+      const d = String(now.getDate()).padStart(2, "0");
+      return y + "-" + m + "-" + d;
     }
 
-    function getActiveShift() { return shifts.find(s => s.id === activeShiftId); }
+    function formatDisplayDate(isoStr) {
+      if (!isoStr) return "";
+      const parts = isoStr.split("-");
+      if (parts.length !== 3) return isoStr;
+      return parts[2] + "/" + parts[1] + "/" + parts[0];
+    }
 
-    function makeEmptyWo() {
+    function pad2(val) {
+      const n = parseInt(val, 10);
+      if (isNaN(n)) return "00";
+      return n < 10 ? "0" + n : String(n);
+    }
+
+    function getDefaultState() {
       return {
-        id: "wo_" + Date.now() + "_" + Math.floor(Math.random()*999),
-        orderNo: "", customer: "", lotPrefix: "", product: "", origin: "",
-        totalQtyMT: "", batchSizeMT: "1.2", mode: "new",
-        sharedWo: false, completedInput: "", remainingMT: "",
-        showStartBatch: false, startBatch: "",
-        imageUrl: "", localPreview: ""
+        date: getTodayISO(),
+        location: "Pioneer",
+        shift: "",
+        previewMode: "interval",
+        showTotalOutput: false,
+        line1: {
+          status: "active",
+          dumping: 4,
+          packing: 2,
+          stage: "current",
+          target: 50,
+          actual: "",
+          startTime: "0800am",
+          endTime: "0800pm",
+          runHrs: "",
+          runMins: "",
+          remarks: ["Line 1 starts at 0800am."]
+        },
+        line2: {
+          status: "noprod",
+          dumping: 4,
+          packing: 2,
+          stage: "current",
+          target: 33,
+          actual: "",
+          startTime: "0800am",
+          endTime: "0800pm",
+          runHrs: "",
+          runMins: "",
+          remarks: []
+        },
+        batching: "",
+        labelling: "",
+        supervisors: [],
+        qcs: [],
+        allPresent: false,
+        leaveText: "",
+        l1Wos: [{ name: "", wo: "", completed: false }],
+        l2Wos: [{ name: "", wo: "", completed: false }],
+        senders: [],
+        senderCustom: ""
       };
     }
 
-    function ensureSifterObj(shift) {
-      if (!shift.sifterMesh) shift.sifterMesh = { line1: [], line2: [] };
-      if (!shift.sifterMesh.line1) shift.sifterMesh.line1 = [];
-      if (!shift.sifterMesh.line2) shift.sifterMesh.line2 = [];
-    }
+    let state = loadState();
 
-    function showView(view) {
-      currentView = view;
-      ["home", "shift", "line", "md", "sifter"].forEach(v => {
-        document.getElementById("view-" + v).classList.toggle("hidden", v !== view);
-      });
-      document.getElementById("backBtn").classList.toggle("hidden", view === "home");
-
-      const shift = getActiveShift();
-      if (view === "home") {
-        document.getElementById("headerTitle").textContent = "Work Order";
-        document.getElementById("headerSub").textContent = "Shift & WhatsApp Assistant";
-        renderShiftsList();
-      } else if (view === "shift") {
-        document.getElementById("headerTitle").textContent = shift.name;
-        document.getElementById("headerSub").textContent = "Select Line, MD, or Sifter Mesh";
-        updateShiftHubSummaries();
-      } else if (view === "line") {
-        document.getElementById("headerTitle").textContent = activeLineKey === "line1" ? "Line 1" : "Line 2";
-        document.getElementById("headerSub").textContent = shift.name;
-      } else if (view === "md") {
-        document.getElementById("headerTitle").textContent = "Metal Detector";
-        document.getElementById("headerSub").textContent = shift.name;
-      } else if (view === "sifter") {
-        document.getElementById("headerTitle").textContent = "Sifter Mesh";
-        document.getElementById("headerSub").textContent = shift.name;
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return getDefaultState();
+        const parsed = JSON.parse(raw);
+        return Object.assign(getDefaultState(), parsed);
+      } catch (e) {
+        return getDefaultState();
       }
-      window.scrollTo(0, 0);
     }
 
-    function goBack() {
-      if (currentView === "line" || currentView === "md" || currentView === "sifter") showView("shift");
-      else if (currentView === "shift") showView("home");
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
     }
 
-    // ==================== HOME: SHIFTS ====================
-    function openNewShiftModal() {
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, "0");
-      const dd = String(today.getDate()).padStart(2, "0");
-      document.getElementById("newShiftDate").value = `${yyyy}-${mm}-${dd}`;
-      selectShiftType("Day shift");
-      document.getElementById("newShiftModal").classList.remove("hidden");
+    function autoResize(el) {
+      if (!el) return;
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + "px";
     }
 
-    function selectShiftType(type) {
-      newShiftType = type;
-      document.getElementById("shiftTypeDay").classList.toggle("active", type === "Day shift");
-      document.getElementById("shiftTypeNight").classList.toggle("active", type === "Night shift");
-    }
-
-    function createShift() {
-      const val = document.getElementById("newShiftDate").value;
-      if (!val) return showToast("Please pick a date");
-      const [yyyy, mm, dd] = val.split("-");
-      const name = `${dd}.${mm}.${yyyy} – ${newShiftType}`;
-
-      const newShift = {
-        id: "shift_" + Date.now(), name, type: newShiftType,
-        createdAt: new Date().toISOString(),
-        line1: [makeEmptyWo()], line2: [makeEmptyWo()],
-        mdLogs: [], sifterMesh: { line1: [], line2: [] }
-      };
-
-      shifts.unshift(newShift);
-      saveLocal();
-      syncToCloud();
-      document.getElementById("newShiftModal").classList.add("hidden");
-      openShift(newShift.id);
-    }
-
-    function renderShiftsList() {
-      const el = document.getElementById("shiftsList");
-      const visibleShifts = shifts.slice(0, MAX_SHIFTS_DISPLAY);
-      if (!visibleShifts.length) {
-        el.innerHTML = `<div class="card" style="text-align:center; color:var(--muted); padding:34px 16px;">
-          <div style="font-size:34px; margin-bottom:8px;">📋</div>
-          <b>No shifts yet</b><br/>Tap "Add New Shift" to start your day.
-        </div>`;
-        return;
-      }
-
-      el.innerHTML = visibleShifts.map(s => {
-        const l1Count = (s.line1 || []).filter(w => w.orderNo).length;
-        const l2Count = (s.line2 || []).filter(w => w.orderNo).length;
-        const mdCount = (s.mdLogs || []).length;
-        const meshCount = ((s.sifterMesh && s.sifterMesh.line1) ? s.sifterMesh.line1.length : 0) +
-                          ((s.sifterMesh && s.sifterMesh.line2) ? s.sifterMesh.line2.length : 0);
-        const isDay = s.type === "Day shift";
-        return `
-          <div class="card shift-card" onclick="openShift('${s.id}')">
-            <div>
-              <div style="font-weight:700; font-size:15.5px;">${s.name}</div>
-              <span class="shift-badge ${isDay ? 'badge-day' : 'badge-night'}">
-                ${isDay ? '☀️ Day Shift' : '🌙 Night Shift'}
-              </span>
-              <div class="shift-meta">L1: ${l1Count} • L2: ${l2Count} • MD: ${mdCount} • Mesh: ${meshCount}</div>
-            </div>
-            <button class="delete-btn" onclick="deleteShift(event, '${s.id}')" title="Delete Shift">🗑</button>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function deleteShift(e, id) {
-      e.stopPropagation();
-      if (!confirm("Delete this shift from the app?")) return;
-      shifts = shifts.filter(s => s.id !== id);
-      saveLocal();
-      syncToCloud();
-      renderShiftsList();
-    }
-
-    function openShift(id) { activeShiftId = id; showView("shift"); }
-
-    function updateShiftHubSummaries() {
-      const s = getActiveShift();
-      ensureSifterObj(s);
-      const l1Last = s.line1[s.line1.length - 1];
-      const l2Last = s.line2[s.line2.length - 1];
-      document.getElementById("hubL1Summary").textContent = l1Last && l1Last.orderNo
-        ? `Active: ${l1Last.orderNo} (${s.line1.length} WO)` : "Tap to scan or enter Work Order";
-      document.getElementById("hubL2Summary").textContent = l2Last && l2Last.orderNo
-        ? `Active: ${l2Last.orderNo} (${s.line2.length} WO)` : "Tap to scan or enter Work Order";
-      document.getElementById("hubMdSummary").textContent = `${(s.mdLogs || []).length} tests logged this shift`;
-      document.getElementById("hubSifterSummary").textContent = `L1: ${s.sifterMesh.line1.length} photo(s) • L2: ${s.sifterMesh.line2.length} photo(s)`;
-    }
-
-    // ==================== LINE 1 & LINE 2 ====================
-    function openLine(lineKey) {
-      activeLineKey = lineKey;
-      const shift = getActiveShift();
-      if (!shift[lineKey] || !shift[lineKey].length) shift[lineKey] = [makeEmptyWo()];
-      activeWoIdx = shift[lineKey].length - 1;
-      showView("line");
-      renderWoTabs();
-      loadWoIntoForm();
-    }
-
-    function renderWoTabs() {
-      const list = getActiveShift()[activeLineKey];
-      const tabsEl = document.getElementById("woTabs");
-      tabsEl.innerHTML = list.map((w, i) => `
-        <button class="wo-pill ${i === activeWoIdx ? 'active' : ''}" onclick="selectWoTab(${i})">
-          ${w.orderNo ? w.orderNo : 'WO #' + (i + 1)}
-        </button>
-      `).join("") + `<button class="wo-pill add-pill" onclick="addNewWo()">＋ New W/O</button>`;
-    }
-
-    function selectWoTab(idx) { activeWoIdx = idx; renderWoTabs(); loadWoIntoForm(); }
-
-    function addNewWo() {
-      const list = getActiveShift()[activeLineKey];
-      list.push(makeEmptyWo());
-      activeWoIdx = list.length - 1;
-      saveLocal();
-      renderWoTabs();
-      loadWoIntoForm();
-      showToast("New Work Order added");
-    }
-
-    function getActiveWo() { return getActiveShift()[activeLineKey][activeWoIdx]; }
-
-    function loadWoIntoForm() {
-      const wo = getActiveWo();
-      document.getElementById("fOrderNo").value = wo.orderNo || "";
-      document.getElementById("fCustomer").value = wo.customer || "";
-      document.getElementById("fLotPrefix").value = wo.lotPrefix || "";
-      document.getElementById("fProduct").value = wo.product || "";
-      document.getElementById("fOrigin").value = wo.origin || "";
-      document.getElementById("fTotalQty").value = wo.totalQtyMT || "";
-      document.getElementById("fBatchSize").value = wo.batchSizeMT || "1.2";
-      document.getElementById("fSharedWo").checked = !!wo.sharedWo;
-      document.getElementById("fCompletedInput").value = wo.completedInput || wo.lastBatch || "";
-      document.getElementById("fRemaining").value = wo.remainingMT || "";
-      document.getElementById("fShowStartBatch").checked = !!wo.showStartBatch;
-      document.getElementById("fStartBatch").value = wo.startBatch || "";
-
-      const wrap = document.getElementById("woImgPreviewWrap");
-      const img = document.getElementById("woImgPreview");
-      const link = document.getElementById("woDriveLink");
-      if (wo.localPreview) { img.src = wo.localPreview; wrap.classList.remove("hidden"); }
-      else { wrap.classList.add("hidden"); }
-      if (wo.imageUrl) { link.href = wo.imageUrl; link.classList.remove("hidden"); }
-      else { link.classList.add("hidden"); }
-
-      setWoMode(wo.mode || "new", true);
-      updateConditionalBoxes();
-      updateBatchCalculations(false);
-      renderWoMessage();
-    }
-
-    function setWoMode(mode, skipSave) {
-      const wo = getActiveWo();
-      wo.mode = mode;
-      document.getElementById("btnModeNew").classList.toggle("active", mode === "new");
-      document.getElementById("btnModeCont").classList.toggle("active", mode === "continue");
-      updateConditionalBoxes();
-      if (!skipSave) { updateBatchCalculations(false); saveLocal(); renderWoMessage(); }
-    }
-
-    function updateConditionalBoxes() {
-      const wo = getActiveWo();
-      const showBal = (wo.mode === "continue" || !!wo.sharedWo);
-      document.getElementById("balanceBox").classList.toggle("hidden", !showBal);
-      document.getElementById("startBatchBox").classList.toggle("hidden", !wo.showStartBatch);
-    }
-
-    function onFieldChange(manualRemaining = false) {
-      const wo = getActiveWo();
-      wo.orderNo = document.getElementById("fOrderNo").value.trim();
-      wo.customer = document.getElementById("fCustomer").value.trim();
-      wo.lotPrefix = document.getElementById("fLotPrefix").value.trim();
-      wo.product = document.getElementById("fProduct").value.trim();
-      wo.origin = document.getElementById("fOrigin").value.trim();
-      wo.totalQtyMT = document.getElementById("fTotalQty").value.trim();
-      wo.batchSizeMT = document.getElementById("fBatchSize").value.trim() || "1.2";
-      wo.sharedWo = document.getElementById("fSharedWo").checked;
-      wo.completedInput = document.getElementById("fCompletedInput").value.trim();
-      wo.showStartBatch = document.getElementById("fShowStartBatch").checked;
-      wo.startBatch = document.getElementById("fStartBatch").value.trim();
-
-      updateConditionalBoxes();
-
-      if (manualRemaining) { wo.remainingMT = document.getElementById("fRemaining").value.trim(); }
-      else { updateBatchCalculations(false); }
-
-      saveLocal();
-      renderWoTabs();
-      renderWoMessage();
-    }
-
-    function cleanNum(num) { return Number(num.toFixed(2)).toString(); }
-
-    // Smart parser: supports "10", "110-120", "1-25, 45-48, 110-125"
-    function parseCompletedBatches(inputStr) {
-      if (!inputStr) return null;
-      const clean = inputStr.replace(/[bB]/g, "").trim();
-      if (!clean) return null;
-
-      // Single plain number -> means that many batches completed (e.g. 10)
-      if (/^\d+(\.\d+)?$/.test(clean)) {
-        return parseFloat(clean);
-      }
-
-      // Ranges or comma-separated items
-      const tokens = clean.split(/[,;+\s]+/).filter(Boolean);
-      let totalBatches = 0;
-      let valid = false;
-
-      for (const tok of tokens) {
-        if (tok.includes("-")) {
-          const parts = tok.split("-").map(x => parseInt(x, 10));
-          if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-            const diff = Math.abs(parts[1] - parts[0]) + 1;
-            totalBatches += diff;
-            valid = true;
-          }
-        } else {
-          const n = parseFloat(tok);
-          if (!isNaN(n)) {
-            totalBatches += n;
-            valid = true;
-          }
-        }
-      }
-      return valid ? totalBatches : null;
-    }
-
-    function updateBatchCalculations(skipInputWrite) {
-      const wo = getActiveWo();
-      const total = parseFloat(wo.totalQtyMT);
-      const bSize = parseFloat(wo.batchSizeMT) || 1.2;
-      const pill = document.getElementById("batchSummaryPill");
-      const compPill = document.getElementById("completedBreakdownPill");
-
-      if (!isNaN(total) && total > 0 && bSize > 0) {
-        const totalBatches = cleanNum(total / bSize);
-        pill.textContent = `📊 ${total}MT = ${totalBatches} batches (${bSize}MT / batch)`;
-        pill.classList.remove("hidden");
-
-        const showBal = (wo.mode === "continue" || !!wo.sharedWo);
-        const compCount = parseCompletedBatches(wo.completedInput);
-
-        if (showBal && compCount !== null) {
-          const compMT = compCount * bSize;
-          const rem = Math.max(0, total - compMT);
-          wo.remainingMT = cleanNum(rem);
-          if (!skipInputWrite) document.getElementById("fRemaining").value = wo.remainingMT;
-          compPill.textContent = `✅ Completed: ${cleanNum(compCount)} batches (${cleanNum(compMT)}MT) → Balance: ${wo.remainingMT}MT`;
-          compPill.classList.remove("hidden");
-        } else {
-          compPill.classList.add("hidden");
-        }
+    function parseTimeMinutes(str) {
+      if (!str) return null;
+      const clean = str.trim().toLowerCase().replace(/\s+/g, "");
+      const match = clean.match(/^(\d{1,2}):?(\d{2})(am|pm)$/);
+      if (!match) return null;
+      let hh = parseInt(match[1], 10);
+      const mm = parseInt(match[2], 10);
+      const mer = match[3];
+      if (hh < 1 || hh > 12 || mm > 59) return null;
+      if (mer === "am") {
+        if (hh === 12) hh = 0;
       } else {
-        pill.classList.add("hidden");
-        compPill.classList.add("hidden");
+        if (hh !== 12) hh += 12;
       }
+      return hh * 60 + mm;
     }
 
-    function pad3(val) {
-      const n = String(val || "").replace(/\D/g, "");
-      return n ? n.padStart(3, "0") : "___";
+    function formatDuration(startStr, endStr) {
+      const s = parseTimeMinutes(startStr);
+      const e = parseTimeMinutes(endStr);
+      if (s === null || e === null) return "";
+      let diff = e - s;
+      if (diff <= 0) diff += 24 * 60;
+      const hrs = Math.floor(diff / 60);
+      const mins = diff % 60;
+      if (mins === 0) return "(" + hrs + "hrs)";
+      return "(" + hrs + "hrs " + mins + "mins)";
     }
 
-    function renderWoMessage() {
-      const wo = getActiveWo();
-      const lineLabel = activeLineKey === "line1" ? "Line 1" : "Line 2";
-      const headerText = wo.mode === "new" ? `*${lineLabel}:* New Work Order` : `*${lineLabel}:* Work Order`;
-      const woLine = wo.customer ? `${wo.orderNo} (${wo.customer})` : wo.orderNo;
-      const lotText = wo.lotPrefix ? (wo.lotPrefix.endsWith("...") ? wo.lotPrefix : `${wo.lotPrefix}...`) : "";
+    function renderAll() {
+      document.getElementById("reportDate").value = state.date;
 
-      let lines = [
-        "*Dear Sirs & Ms Priya,*",
-        "",
-        headerText
-      ];
+      document.querySelectorAll("#locationBubbles .bubble").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.val === state.location);
+      });
+      document.querySelectorAll("#shiftBubbles .bubble").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.val === state.shift);
+      });
 
-      if (wo.sharedWo) {
-        lines.push("Both lines shares same W/O");
+      renderLineUI(1, state.line1);
+      renderLineUI(2, state.line2);
+
+      document.getElementById("showTotalOutput").checked = !!state.showTotalOutput;
+
+      document.getElementById("batchingInput").value = state.batching;
+      document.getElementById("batchingNilBtn").classList.toggle("active", state.batching.trim().toLowerCase() === "nil");
+
+      const labEl = document.getElementById("labellingInput");
+      labEl.value = state.labelling;
+      autoResize(labEl);
+
+      // Supervisors
+      const supWrap = document.getElementById("supBubbles");
+      supWrap.innerHTML = "";
+      SUPERVISORS.forEach(name => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "bubble" + (state.supervisors.includes(name) ? " active" : "");
+        b.textContent = name;
+        b.onclick = () => toggleSupervisor(name);
+        supWrap.appendChild(b);
+      });
+
+      // QCs
+      const qcWrap = document.getElementById("qcBubbles");
+      qcWrap.innerHTML = "";
+      QCS.forEach(name => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "bubble" + (state.qcs.includes(name) ? " active" : "");
+        b.textContent = name;
+        b.onclick = () => toggleQc(name);
+        qcWrap.appendChild(b);
+      });
+
+      // Leave
+      document.getElementById("allPresentBtn").classList.toggle("active", !!state.allPresent);
+      const leaveEl = document.getElementById("leaveInput");
+      leaveEl.value = state.leaveText;
+      autoResize(leaveEl);
+
+      // WOs
+      renderWoList(1, state.l1Wos);
+      renderWoList(2, state.l2Wos);
+
+      // Senders
+      const sndWrap = document.getElementById("senderBubbles");
+      sndWrap.innerHTML = "";
+      SENDER_OPTIONS.forEach(name => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "bubble" + (state.senders.includes(name) ? " active" : "");
+        b.textContent = name;
+        b.onclick = () => toggleSender(name);
+        sndWrap.appendChild(b);
+      });
+      document.getElementById("senderCustom").value = state.senderCustom;
+
+      // Preview mode
+      document.getElementById("modeStartBtn").classList.toggle("active", state.previewMode === "start");
+      document.getElementById("modeIntervalBtn").classList.toggle("active", state.previewMode === "interval");
+
+      updatePreview();
+    }
+
+    function renderLineUI(num, line) {
+      const p = "l" + num;
+      const isActive = line.status === "active";
+      document.getElementById(p + "StatusActive").classList.toggle("active", isActive);
+      document.getElementById(p + "StatusNoProd").classList.toggle("active", !isActive);
+      document.getElementById(p + "Body").classList.toggle("hidden", !isActive);
+
+      document.getElementById(p + "Dumping").value = line.dumping;
+      document.getElementById(p + "Packing").value = line.packing;
+      const totalOps = (parseInt(line.dumping, 10) || 0) + (parseInt(line.packing, 10) || 0);
+      document.getElementById(p + "TotalOps").value = pad2(totalOps) + " Operators";
+
+      document.getElementById(p + "StageCurrent").classList.toggle("active", line.stage === "current");
+      document.getElementById(p + "StageFinal").classList.toggle("active", line.stage === "final");
+      document.getElementById(p + "ActualLabel").textContent = line.stage === "final" ? "Final Output (MT)" : "Current Output (MT)";
+
+      document.getElementById(p + "Target").value = line.target;
+      document.getElementById(p + "Actual").value = line.actual;
+      document.getElementById(p + "StartTime").value = line.startTime;
+      document.getElementById(p + "EndTime").value = line.endTime;
+      document.getElementById(p + "RunHrs").value = line.runHrs;
+      document.getElementById(p + "RunMins").value = line.runMins;
+
+      const calc = computeLineMetrics(line);
+      document.getElementById(p + "VarDisplay").textContent = calc.varLabel + ": " + calc.varValue.toFixed(3) + "MT";
+      document.getElementById(p + "EffDisplay").textContent = "Efficiency: " + calc.eff.toFixed(3) + "MT/hr";
+
+      // Remarks
+      const listEl = document.getElementById(p + "RemarksList");
+      listEl.innerHTML = "";
+      line.remarks.forEach((txt, idx) => {
+        const row = document.createElement("div");
+        row.className = "remark-row";
+
+        const badge = document.createElement("div");
+        badge.className = "remark-num";
+        badge.textContent = idx + 1;
+
+        const ta = document.createElement("textarea");
+        ta.rows = 1;
+        ta.value = txt;
+        ta.placeholder = "Enter remark...";
+        ta.oninput = function () {
+          autoResize(this);
+          line.remarks[idx] = this.value;
+          saveState();
+          updatePreview();
+        };
+
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "btn-icon-del";
+        del.textContent = "×";
+        del.onclick = function () {
+          line.remarks.splice(idx, 1);
+          saveState();
+          renderLineUI(num, line);
+          updatePreview();
+        };
+
+        row.appendChild(badge);
+        row.appendChild(ta);
+        row.appendChild(del);
+        listEl.appendChild(row);
+        autoResize(ta);
+      });
+    }
+
+    function renderWoList(num, list) {
+      const container = document.getElementById("l" + num + "WoList");
+      container.innerHTML = "";
+      list.forEach((item, idx) => {
+        const box = document.createElement("div");
+        box.className = "wo-box";
+
+        const top = document.createElement("div");
+        top.className = "wo-top";
+
+        const lbl = document.createElement("span");
+        lbl.className = "wo-label";
+        lbl.textContent = "Item #" + (idx + 1);
+
+        const acts = document.createElement("div");
+        acts.className = "wo-actions";
+
+        const doneBtn = document.createElement("button");
+        doneBtn.type = "button";
+        doneBtn.className = "btn-done" + (item.completed ? " completed" : "");
+        doneBtn.textContent = item.completed ? "✓ Completed" : "Completed";
+        doneBtn.onclick = () => {
+          item.completed = !item.completed;
+          saveState();
+          renderWoList(num, list);
+          updatePreview();
+        };
+
+        acts.appendChild(doneBtn);
+
+        if (list.length > 1) {
+          const delBtn = document.createElement("button");
+          delBtn.type = "button";
+          delBtn.className = "btn-icon-del";
+          delBtn.style.height = "26px";
+          delBtn.style.width = "26px";
+          delBtn.textContent = "×";
+          delBtn.onclick = () => {
+            list.splice(idx, 1);
+            saveState();
+            renderWoList(num, list);
+            updatePreview();
+          };
+          acts.appendChild(delBtn);
+        }
+
+        top.appendChild(lbl);
+        top.appendChild(acts);
+
+        const grid = document.createElement("div");
+        grid.className = "grid-2";
+
+        const nameInp = document.createElement("input");
+        nameInp.type = "text";
+        nameInp.placeholder = "Product Name";
+        nameInp.value = item.name;
+        nameInp.oninput = function () {
+          item.name = this.value;
+          saveState();
+          updatePreview();
+        };
+
+        const woInp = document.createElement("input");
+        woInp.type = "text";
+        woInp.placeholder = "WO (e.g. PRD26-0759)";
+        woInp.value = item.wo;
+        woInp.oninput = function () {
+          item.wo = this.value;
+          saveState();
+          updatePreview();
+        };
+
+        grid.appendChild(nameInp);
+        grid.appendChild(woInp);
+
+        box.appendChild(top);
+        box.appendChild(grid);
+        container.appendChild(box);
+      });
+    }
+
+    function computeLineMetrics(line) {
+      const target = parseFloat(line.target) || 0;
+      const actual = parseFloat(line.actual) || 0;
+      const diff = actual - target;
+
+      let varLabel = "Balance Output";
+      let varValue = 0;
+      if (diff > 0) {
+        varLabel = "Gain Output";
+        varValue = diff;
+      } else {
+        varValue = Math.abs(diff);
+        varLabel = line.stage === "final" ? "Loss Output" : "Balance Output";
       }
 
-      lines.push(`*W/O:* ${woLine}`);
-      lines.push(`*Lot No.:* ${lotText}`);
-      lines.push(`*Product:* ${wo.product}`);
+      const hrs = parseFloat(line.runHrs) || 0;
+      const mins = parseFloat(line.runMins) || 0;
+      const totalHrs = hrs + mins / 60;
+      const eff = totalHrs > 0 ? actual / totalHrs : 0;
 
-      if (wo.origin) {
-        lines.push(`*Origin:* ${wo.origin}`);
+      return { target, actual, varLabel, varValue, eff };
+    }
+
+    function setLocation(loc) {
+      state.location = loc;
+      saveState();
+      renderAll();
+    }
+
+    function setShift(shift) {
+      state.shift = shift;
+      const isNight = shift === "Night";
+      const sTime = isNight ? "0800pm" : "0800am";
+      const eTime = isNight ? "0800am" : "0800pm";
+
+      [1, 2].forEach(num => {
+        const line = num === 1 ? state.line1 : state.line2;
+        line.startTime = sTime;
+        line.endTime = eTime;
+        if (line.status === "active") {
+          if (line.remarks.length === 0 || /^Line [12] starts at 0800(am|pm)\.?$/i.test(line.remarks[0].trim())) {
+            line.remarks[0] = "Line " + num + " starts at " + sTime + ".";
+          }
+        }
+      });
+
+      saveState();
+      renderAll();
+    }
+
+    function setLineStatus(num, status) {
+      const line = num === 1 ? state.line1 : state.line2;
+      line.status = status;
+      if (status === "noprod") {
+        line.remarks = line.remarks.filter(r => !/^Line [12] starts at 0800(am|pm)\.?$/i.test(r.trim()));
+      } else if (status === "active" && line.remarks.length === 0) {
+        const sTime = state.shift === "Night" ? "0800pm" : "0800am";
+        line.remarks = ["Line " + num + " starts at " + sTime + "."];
+      }
+      saveState();
+      renderAll();
+    }
+
+    function setOutputStage(num, stage) {
+      const line = num === 1 ? state.line1 : state.line2;
+      line.stage = stage;
+      saveState();
+      renderAll();
+    }
+
+    function addRemark(num) {
+      const line = num === 1 ? state.line1 : state.line2;
+      line.remarks.push("");
+      saveState();
+      renderLineUI(num, line);
+    }
+
+    function addWo(num) {
+      const list = num === 1 ? state.l1Wos : state.l2Wos;
+      list.push({ name: "", wo: "", completed: false });
+      saveState();
+      renderWoList(num, list);
+    }
+
+    function toggleBatchingNil() {
+      if (state.batching.trim().toLowerCase() === "nil") {
+        state.batching = "";
+      } else {
+        state.batching = "Nil";
+      }
+      saveState();
+      renderAll();
+    }
+
+    function toggleSupervisor(name) {
+      const idx = state.supervisors.indexOf(name);
+      if (idx >= 0) {
+        state.supervisors.splice(idx, 1);
+      } else {
+        state.supervisors.push(name);
+      }
+      // Sync sender bubbles automatically
+      state.senders = state.supervisors.map(s => (s === "Balaji" ? "N. Balaji" : s));
+      saveState();
+      renderAll();
+    }
+
+    function toggleQc(name) {
+      const idx = state.qcs.indexOf(name);
+      if (idx >= 0) {
+        state.qcs.splice(idx, 1);
+      } else {
+        state.qcs.push(name);
+      }
+      saveState();
+      renderAll();
+    }
+
+    function toggleSender(name) {
+      const idx = state.senders.indexOf(name);
+      if (idx >= 0) {
+        state.senders.splice(idx, 1);
+      } else {
+        state.senders.push(name);
+      }
+      saveState();
+      renderAll();
+    }
+
+    function toggleAllPresent() {
+      state.allPresent = !state.allPresent;
+      if (state.allPresent) {
+        state.leaveText = "All Present.";
+      } else if (state.leaveText === "All Present.") {
+        state.leaveText = "";
+      }
+      saveState();
+      renderAll();
+    }
+
+    function onLeaveTextChange() {
+      state.leaveText = document.getElementById("leaveInput").value;
+      state.allPresent = state.leaveText.trim().toLowerCase() === "all present.";
+      document.getElementById("allPresentBtn").classList.toggle("active", state.allPresent);
+      saveState();
+      updatePreview();
+    }
+
+    function setPreviewMode(mode) {
+      state.previewMode = mode;
+      saveState();
+      renderAll();
+    }
+
+    function onDateChange() {
+      state.date = document.getElementById("reportDate").value;
+      saveState();
+      updatePreview();
+    }
+
+    function onInputChange() {
+      [1, 2].forEach(num => {
+        const p = "l" + num;
+        const line = num === 1 ? state.line1 : state.line2;
+        line.dumping = document.getElementById(p + "Dumping").value;
+        line.packing = document.getElementById(p + "Packing").value;
+        line.target = document.getElementById(p + "Target").value;
+        line.actual = document.getElementById(p + "Actual").value;
+        line.startTime = document.getElementById(p + "StartTime").value;
+        line.endTime = document.getElementById(p + "EndTime").value;
+        line.runHrs = document.getElementById(p + "RunHrs").value;
+        line.runMins = document.getElementById(p + "RunMins").value;
+
+        const totalOps = (parseInt(line.dumping, 10) || 0) + (parseInt(line.packing, 10) || 0);
+        document.getElementById(p + "TotalOps").value = pad2(totalOps) + " Operators";
+
+        const calc = computeLineMetrics(line);
+        document.getElementById(p + "VarDisplay").textContent = calc.varLabel + ": " + calc.varValue.toFixed(3) + "MT";
+        document.getElementById(p + "EffDisplay").textContent = "Efficiency: " + calc.eff.toFixed(3) + "MT/hr";
+      });
+
+      state.showTotalOutput = document.getElementById("showTotalOutput").checked;
+      state.batching = document.getElementById("batchingInput").value;
+      document.getElementById("batchingNilBtn").classList.toggle("active", state.batching.trim().toLowerCase() === "nil");
+      state.labelling = document.getElementById("labellingInput").value;
+      state.senderCustom = document.getElementById("senderCustom").value;
+
+      saveState();
+      updatePreview();
+    }
+
+    function formatJoinNames(arr) {
+      if (!arr || arr.length === 0) return "";
+      if (arr.length === 1) return arr[0];
+      if (arr.length === 2) return arr[0] + " & " + arr[1];
+      return arr.slice(0, -1).join(", ") + " & " + arr[arr.length - 1];
+    }
+
+    function buildLineBlock(num, line, isStartMode) {
+      const out = [];
+      if (line.status === "noprod") {
+        out.push("Line-" + num + ": No Production");
+        const cleanRemarks = line.remarks.map(r => r.trim()).filter(Boolean);
+        if (cleanRemarks.length > 0) {
+          out.push("Remark:");
+          cleanRemarks.forEach((r, i) => out.push((i + 1) + ". " + r));
+        }
+        return out.join("
+");
       }
 
-      lines.push(`*Total Quantity:* ${wo.totalQtyMT ? wo.totalQtyMT + "MT" : ""}`);
+      const dOps = pad2(line.dumping);
+      const pOps = pad2(line.packing);
+      const tOps = pad2((parseInt(line.dumping, 10) || 0) + (parseInt(line.packing, 10) || 0));
 
-      const showBal = (wo.mode === "continue" || !!wo.sharedWo);
-      if (showBal && wo.remainingMT !== "") {
-        lines.push(`*Balance Quantity:* ${wo.remainingMT}MT`);
+      out.push("Line-" + num + ": " + tOps + " Operators");
+      out.push("Dumping: " + dOps + " Operators");
+      out.push("Packing: " + pOps + " Operators");
+
+      if (!isStartMode) {
+        const calc = computeLineMetrics(line);
+        const stageTitle = line.stage === "final" ? "Final Output" : "Current Output";
+        out.push("");
+        out.push("Target Output: " + calc.target.toFixed(3) + "MT");
+        out.push("*" + stageTitle + ": " + calc.actual.toFixed(3) + "MT*");
+        out.push(calc.varLabel + ": " + calc.varValue.toFixed(3) + "MT");
+
+        const dur = formatDuration(line.startTime, line.endTime);
+        const opRange = (line.startTime || "") + "-" + (line.endTime || "") + (dur ? " " + dur : "");
+        const rH = parseInt(line.runHrs, 10) || 0;
+        const rM = parseInt(line.runMins, 10) || 0;
+        const runStr = rM > 0 ? rH + "hrs " + rM + "mins" : rH + "hrs";
+
+        out.push("");
+        out.push("Operating Hours: " + opRange);
+        out.push("Prod. Running Hrs: " + runStr);
+        out.push("*Efficiency: " + calc.eff.toFixed(3) + "MT/hr*");
       }
 
-      if (wo.showStartBatch && wo.startBatch) {
+      const cleanRemarks = line.remarks.map(r => r.trim()).filter(Boolean);
+      if (cleanRemarks.length > 0) {
+        out.push("");
+        out.push("Remark:");
+        cleanRemarks.forEach((r, i) => out.push((i + 1) + ". " + r));
+      }
+
+      return out.join("
+");
+    }
+
+    function buildWoBlock(num, list) {
+      const valid = list.filter(x => x.name.trim() || x.wo.trim());
+      if (valid.length === 0) return "";
+      const out = ["*Line " + num + ":*"];
+      valid.forEach((item, idx) => {
+        const prefix = valid.length > 1 ? (idx + 1) + ". " : "";
+        if (item.name.trim()) out.push(prefix + item.name.trim());
+        if (item.wo.trim()) out.push("WO: " + item.wo.trim());
+        if (item.completed) out.push("(Completed)");
+      });
+      return out.join("
+");
+    }
+
+    function generateReportText() {
+      const isStartMode = state.previewMode === "start";
+      const lines = [];
+
+      lines.push("*Dear Sirs & Ms.Priya,*");
+      lines.push("");
+
+      const dateStr = formatDisplayDate(state.date);
+      const shiftStr = state.shift ? state.shift + " Shift" : "Shift";
+      lines.push((dateStr + " " + state.location + " " + shiftStr + ":").trim());
+      lines.push("");
+
+      lines.push(buildLineBlock(1, state.line1, isStartMode));
+      lines.push("");
+      lines.push(buildLineBlock(2, state.line2, isStartMode));
+
+      if (!isStartMode && state.showTotalOutput) {
+        const l1Val = state.line1.status === "active" ? (parseFloat(state.line1.actual) || 0) : 0;
+        const l2Val = state.line2.status === "active" ? (parseFloat(state.line2.actual) || 0) : 0;
+        const tot = l1Val + l2Val;
         lines.push("");
-        lines.push(`*---> Batch starts from B${pad3(wo.startBatch)}*`);
+        lines.push("*Total output = " + tot.toFixed(3) + "MT*");
       }
 
       lines.push("");
-      lines.push("First bag sealing, weight, bulkiness and stencilling checked – all found OK sir.");
-
-      document.getElementById("woMsgPreview").textContent = lines.join("\n");
-    }
-
-    // ==================== IMAGE UPLOAD + OCR ====================
-    async function handleImageUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      showLoader("Compressing & scanning image...");
-      try {
-        const compressedDataUrl = await compressImage(file, 1600, 0.82);
-        const wo = getActiveWo();
-        wo.localPreview = compressedDataUrl;
-        loadWoIntoForm();
-
-        if (!scriptUrl) {
-          hideLoader();
-          showToast("Preview loaded. Connect Drive URL in ⚙ Settings for OCR!");
-          return;
-        }
-
-        const base64Data = compressedDataUrl.split(",")[1];
-        const res = await fetch(scriptUrl, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "ocr_and_upload",
-            shiftName: getActiveShift().name,
-            lineName: activeLineKey === "line1" ? "Line 1" : "Line 2",
-            mimeType: "image/jpeg",
-            imageBase64: base64Data
-          })
-        });
-        const json = await res.json();
-
-        if (json.status === "ok") {
-          wo.imageUrl = json.imageUrl || "";
-          if (json.extracted) {
-            const ex = json.extracted;
-            if (ex.orderNo) wo.orderNo = ex.orderNo;
-            if (ex.customer) wo.customer = ex.customer;
-            if (ex.lotPrefix) wo.lotPrefix = ex.lotPrefix;
-            if (ex.product) wo.product = ex.product;
-            wo.origin = ex.origin || "";
-            if (ex.totalQtyMT) wo.totalQtyMT = String(ex.totalQtyMT).replace(/[^\d.]/g, "");
-            showToast("Scanned & saved to Drive!");
-          } else if (json.warning) {
-            showToast(json.warning);
-          }
-          saveLocal();
-          syncToCloud();
-          loadWoIntoForm();
-        } else {
-          showToast("Error: " + json.message);
-        }
-      } catch (err) {
-        showToast("Upload failed: " + err.message);
-      } finally {
-        hideLoader();
-        event.target.value = "";
+      const bVal = state.batching.trim();
+      if (bVal) {
+        const formattedB = /^\d+$/.test(bVal) ? pad2(bVal) + " Operators" : bVal;
+        lines.push("Batching: " + formattedB);
+      } else {
+        lines.push("Batching:");
       }
-    }
 
-    function compressImage(file, maxWidth, quality) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = e => {
-          const img = new Image();
-          img.onload = () => {
-            let w = img.width, h = img.height;
-            if (w > maxWidth) { h = Math.round((h * maxWidth) / w); w = maxWidth; }
-            const canvas = document.createElement("canvas");
-            canvas.width = w; canvas.height = h;
-            canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL("image/jpeg", quality));
-          };
-          img.onerror = reject;
-          img.src = e.target.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
+      lines.push("");
+      lines.push("Labelling: " + (state.labelling.trim() || ""));
 
-    async function saveAndLogWo() {
-      saveLocal();
-      syncToCloud();
-      if (!scriptUrl) return showToast("Saved locally (connect Drive in ⚙ Settings)");
-      const wo = getActiveWo();
-      showLoader("Logging Work Order to Sheet...");
-      try {
-        await fetch(scriptUrl, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "log_wo",
-            shiftName: getActiveShift().name,
-            lineName: activeLineKey === "line1" ? "Line 1" : "Line 2",
-            mode: wo.mode + (wo.sharedWo ? " (Shared)" : ""),
-            orderNo: wo.orderNo, customer: wo.customer,
-            lotPrefix: wo.lotPrefix, product: wo.product, origin: wo.origin,
-            totalQtyMT: wo.totalQtyMT, remainingMT: (wo.mode === "continue" || wo.sharedWo) ? wo.remainingMT : "",
-            imageUrl: wo.imageUrl
-          })
-        });
-        showToast("Saved & logged to Google Sheet!");
-      } catch (err) {
-        showToast("Saved locally (sync error)");
-      } finally {
-        hideLoader();
+      lines.push("");
+      const supStr = formatJoinNames(state.supervisors);
+      const qcStr = formatJoinNames(state.qcs);
+      let supQcLine = "";
+      if (supStr && qcStr) supQcLine = supStr + " ; " + qcStr;
+      else supQcLine = supStr || qcStr;
+      lines.push("Production Supervisor & QC:");
+      if (supQcLine) lines.push(supQcLine);
+
+      lines.push("");
+      lines.push("Leave:");
+      if (state.leaveText.trim()) {
+        lines.push(state.leaveText.trim());
       }
-    }
 
-    // ==================== METAL DETECTOR ====================
-    function getRoundedTimeStr() {
-      const now = new Date();
-      let mins = Math.round(now.getMinutes() / 5) * 5;
-      let hrs = now.getHours();
-      if (mins === 60) { mins = 0; hrs = (hrs + 1) % 24; }
-      return `${String(hrs).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
-    }
-
-    function setRoundedTime(inputId) {
-      document.getElementById(inputId).value = getRoundedTimeStr();
-      renderMdMessage();
-    }
-
-    function openMD() {
-      showView("md");
-      populateMdDropdown("mdL1Select", getActiveShift().line1);
-      populateMdDropdown("mdL2Select", getActiveShift().line2);
-      setRoundedTime("mdL1Time");
-      setRoundedTime("mdL2Time");
-      document.getElementById("mdL1Batch").value = "";
-      document.getElementById("mdL2Batch").value = "";
-      renderMdMessage();
-      renderMdHistory();
-    }
-
-    function populateMdDropdown(selectId, woList) {
-      const sel = document.getElementById(selectId);
-      if (!woList || !woList.length) { sel.innerHTML = `<option value="">No Work Order</option>`; return; }
-      sel.innerHTML = woList.map((w, i) => `
-        <option value="${i}">${w.orderNo || 'WO #' + (i+1)} (${w.lotPrefix || 'No Lot'})</option>
-      `).join("");
-      sel.value = String(woList.length - 1);
-    }
-
-    function buildMdLineBlock(lineLabel, lineKey, enabledId, selectId, batchId, timeId) {
-      if (!document.getElementById(enabledId).checked) return null;
-      const batchRaw = document.getElementById(batchId).value.trim();
-      const idx = parseInt(document.getElementById(selectId).value, 10);
-      const wo = getActiveShift()[lineKey][idx];
-      if (!wo || (!batchRaw && !wo.orderNo)) return null;
-
-      const time = document.getElementById(timeId).value || getRoundedTimeStr();
-      const prefix = (wo.lotPrefix || "").replace(/(\.\.\.|…)$/, "");
-      const fullLot = `${prefix}${pad3(batchRaw)}`;
-      return {
-        text: `${lineLabel}: ${time}\n${wo.orderNo || 'PRD__'} | ${fullLot} - MD VERIFIED`,
-        lineName: lineLabel, mdTime: time, orderNo: wo.orderNo || "", fullLot
-      };
-    }
-
-    function renderMdMessage() {
-      const b1 = buildMdLineBlock("Line 1", "line1", "mdL1Enabled", "mdL1Select", "mdL1Batch", "mdL1Time");
-      const b2 = buildMdLineBlock("Line 2", "line2", "mdL2Enabled", "mdL2Select", "mdL2Batch", "mdL2Time");
-      const parts = [];
-      if (b1 && document.getElementById("mdL1Batch").value.trim()) parts.push(b1.text);
-      if (b2 && document.getElementById("mdL2Batch").value.trim()) parts.push(b2.text);
-
-      document.getElementById("mdMsgPreview").textContent = parts.length
-        ? parts.join("\n")
-        : "Enter a batch number for Line 1 or Line 2 above to generate the message.";
-    }
-
-    async function logMdToSheet() {
-      const msg = document.getElementById("mdMsgPreview").textContent;
-      if (msg.startsWith("Enter a batch")) return showToast("Enter at least one batch number");
-
-      const shift = getActiveShift();
-      const entry = { time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), msg };
-      shift.mdLogs = shift.mdLogs || [];
-      shift.mdLogs.unshift(entry);
-      saveLocal();
-      renderMdHistory();
-      syncToCloud();
-
-      if (scriptUrl) {
-        const b1 = buildMdLineBlock("Line 1", "line1", "mdL1Enabled", "mdL1Select", "mdL1Batch", "mdL1Time");
-        const b2 = buildMdLineBlock("Line 2", "line2", "mdL2Enabled", "mdL2Select", "mdL2Batch", "mdL2Time");
-        const items = [];
-        if (b1 && document.getElementById("mdL1Batch").value.trim()) items.push(b1);
-        if (b2 && document.getElementById("mdL2Batch").value.trim()) items.push(b2);
-
-        for (const item of items) {
-          fetch(scriptUrl, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({
-              action: "log_md", shiftName: shift.name, lineName: item.lineName,
-              mdTime: item.mdTime, orderNo: item.orderNo, fullLot: item.fullLot, message: item.text
-            })
-          }).catch(() => {});
-        }
+      const wo1 = buildWoBlock(1, state.l1Wos);
+      const wo2 = buildWoBlock(2, state.l2Wos);
+      if (wo1) {
+        lines.push("");
+        lines.push(wo1);
       }
-      showToast("MD Test logged!");
-    }
-
-    function renderMdHistory() {
-      const logs = getActiveShift().mdLogs || [];
-      const box = document.getElementById("mdHistoryBox");
-      const list = document.getElementById("mdHistoryList");
-      if (!logs.length) { box.classList.add("hidden"); return; }
-      box.classList.remove("hidden");
-      list.innerHTML = logs.map(l => `
-        <div style="padding:8px 0; border-bottom:1px solid #f1f5f9; white-space:pre-wrap;">${l.msg}</div>
-      `).join("");
-    }
-
-    // ==================== SIFTER MESH ====================
-    function openSifter() {
-      ensureSifterObj(getActiveShift());
-      showView("sifter");
-      renderSifterGrids();
-    }
-
-    function renderSifterGrids() {
-      const s = getActiveShift();
-      ensureSifterObj(s);
-      renderSingleSifterGrid("sifterGridL1", s.sifterMesh.line1, "line1");
-      renderSingleSifterGrid("sifterGridL2", s.sifterMesh.line2, "line2");
-    }
-
-    function renderSingleSifterGrid(elId, list, lineKey) {
-      const el = document.getElementById(elId);
-      if (!list.length) {
-        el.innerHTML = `<div style="grid-column:1/-1; font-size:12px; color:var(--muted); text-align:center; padding:8px;">No photos uploaded yet</div>`;
-        return;
+      if (wo2) {
+        lines.push("");
+        lines.push(wo2);
       }
-      el.innerHTML = list.map((item, idx) => `
-        <div class="mesh-thumb">
-          <img src="${item.thumb || ''}" alt="Mesh ${idx+1}" onclick="openZoomModal('${item.thumb || ''}')" />
-          <button class="mesh-del" onclick="deleteSifterPhoto('${lineKey}', ${idx})">✕</button>
-          ${item.imageUrl ? `<a class="mesh-drive-badge" href="${item.imageUrl}" target="_blank">Drive ↗</a>` : ''}
-        </div>
-      `).join("");
+
+      lines.push("");
+      lines.push("Thank you Sirs,");
+      const allSenders = [...state.senders];
+      if (state.senderCustom.trim()) allSenders.push(state.senderCustom.trim());
+      const senderStr = formatJoinNames(allSenders);
+      if (senderStr) lines.push(senderStr);
+
+      return lines.join("
+");
     }
 
-    async function handleSifterUpload(event, lineKey) {
-      const files = Array.from(event.target.files || []);
-      if (!files.length) return;
-
-      const shift = getActiveShift();
-      ensureSifterObj(shift);
-      const lineLabel = lineKey === "line1" ? "Line 1" : "Line 2";
-
-      showLoader(`Uploading ${files.length} mesh photo(s)...`);
-      try {
-        for (let i = 0; i < files.length; i++) {
-          const fullDataUrl = await compressImage(files[i], 1600, 0.82);
-          const thumbDataUrl = await compressImage(files[i], 420, 0.72);
-          let imageUrl = "";
-
-          if (scriptUrl) {
-            const base64Data = fullDataUrl.split(",")[1];
-            const res = await fetch(scriptUrl, {
-              method: "POST",
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify({
-                action: "upload_sifter_mesh",
-                shiftName: shift.name,
-                lineName: lineLabel,
-                mimeType: "image/jpeg",
-                imageBase64: base64Data
-              })
-            });
-            const json = await res.json();
-            if (json.status === "ok") imageUrl = json.imageUrl || "";
-          }
-
-          shift.sifterMesh[lineKey].push({
-            id: "mesh_" + Date.now() + "_" + i,
-            thumb: thumbDataUrl,
-            imageUrl
-          });
-        }
-        saveLocal();
-        syncToCloud();
-        renderSifterGrids();
-        showToast(scriptUrl ? "Mesh photo(s) saved to Drive!" : "Saved locally (connect Drive in ⚙ Settings)");
-      } catch (err) {
-        showToast("Upload error: " + err.message);
-      } finally {
-        hideLoader();
-        event.target.value = "";
-      }
+    function updatePreview() {
+      document.getElementById("previewBox").textContent = generateReportText();
     }
 
-    function deleteSifterPhoto(lineKey, idx) {
-      if (!confirm("Remove this photo from the list?")) return;
-      getActiveShift().sifterMesh[lineKey].splice(idx, 1);
-      saveLocal();
-      syncToCloud();
-      renderSifterGrids();
-    }
-
-    // ==================== ZOOMABLE IMAGE MODAL ====================
-    function openZoomModal(src) {
-      if (!src) return;
-      const img = document.getElementById("zoomModalImg");
-      img.src = src;
-      currentZoom = 1;
-      applyZoom();
-      document.getElementById("zoomModal").classList.remove("hidden");
-    }
-
-    function closeZoomModal() {
-      document.getElementById("zoomModal").classList.add("hidden");
-    }
-
-    function changeZoom(delta) {
-      currentZoom = Math.min(4, Math.max(1, currentZoom + delta));
-      applyZoom();
-    }
-
-    function resetZoom() {
-      currentZoom = 1;
-      applyZoom();
-    }
-
-    function applyZoom() {
-      const img = document.getElementById("zoomModalImg");
-      img.style.width = (currentZoom * 100) + "%";
-      document.getElementById("zoomLevelText").textContent = Math.round(currentZoom * 100) + "%";
-    }
-
-    // ==================== CLOUD SYNC & SETTINGS ====================
-    function openSettings() {
-      document.getElementById("scriptUrlInput").value = scriptUrl;
-      document.getElementById("settingsModal").classList.remove("hidden");
-    }
-
-    function saveSettings() {
-      scriptUrl = document.getElementById("scriptUrlInput").value.trim();
-      localStorage.setItem(URL_KEY, scriptUrl);
-      document.getElementById("settingsModal").classList.add("hidden");
-      showToast("Drive URL saved!");
-      if (scriptUrl) syncFromCloud();
-    }
-
-    function syncToCloud() {
-      if (!scriptUrl) return;
-      const cleanShifts = shifts.slice(0, MAX_SHIFTS_DISPLAY).map(s => ({
-        ...s,
-        line1: (s.line1 || []).map(w => ({ ...w, localPreview: "" })),
-        line2: (s.line2 || []).map(w => ({ ...w, localPreview: "" })),
-        sifterMesh: s.sifterMesh ? {
-          line1: (s.sifterMesh.line1 || []).map(m => ({ id: m.id, imageUrl: m.imageUrl, thumb: "" })),
-          line2: (s.sifterMesh.line2 || []).map(m => ({ id: m.id, imageUrl: m.imageUrl, thumb: "" }))
-        } : { line1: [], line2: [] }
-      }));
-
-      fetch(scriptUrl, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "sync_shifts", shifts: cleanShifts })
-      }).catch(() => {});
-    }
-
-    async function syncFromCloud(silent = false) {
-      if (!scriptUrl) { if (!silent) showToast("Set Google Script URL in ⚙ Settings first"); return; }
-      if (!silent) showLoader("Syncing from Google Drive...");
-      try {
-        const res = await fetch(scriptUrl + "?action=get_shifts");
-        const json = await res.json();
-        if (json.status === "ok" && Array.isArray(json.shifts) && json.shifts.length) {
-          shifts = json.shifts.slice(0, MAX_SHIFTS_DISPLAY);
-          saveLocal();
-          if (currentView === "home") renderShiftsList();
-          if (!silent) showToast("Synced from Drive!");
-        }
-      } catch (err) {
-        if (!silent) showToast("Sync failed");
-      } finally {
-        if (!silent) hideLoader();
-      }
-    }
-
-    function copyText(preId, btnId) {
-      const text = document.getElementById(preId).textContent;
-      navigator.clipboard.writeText(text).then(() => {
-        const btn = document.getElementById(btnId);
-        const orig = btn.innerHTML;
-        btn.innerHTML = "✓ Copied";
-        btn.classList.add("copied");
-        setTimeout(() => { btn.innerHTML = orig; btn.classList.remove("copied"); }, 1800);
-      });
-    }
-
-    function closeModalOnBg(e, id) { if (e.target.id === id) document.getElementById(id).classList.add("hidden"); }
-    function showLoader(msg) { document.getElementById("loaderText").textContent = msg; document.getElementById("loader").classList.remove("hidden"); }
-    function hideLoader() { document.getElementById("loader").classList.add("hidden"); }
     function showToast(msg) {
       const t = document.getElementById("toast");
       t.textContent = msg;
-      t.classList.remove("hidden");
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => t.classList.add("hidden"), 3200);
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2000);
     }
+
+    function copyReport() {
+      const text = generateReportText();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast("Copied to clipboard!");
+        }).catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+        showToast("Copied to clipboard!");
+      } catch (e) {
+        showToast("Copy failed - select text manually");
+      }
+      document.body.removeChild(ta);
+    }
+
+    function shareWhatsApp() {
+      const text = encodeURIComponent(generateReportText());
+      window.open("https://api.whatsapp.com/send?text=" + text, "_blank");
+    }
+
+    function openResetModal() {
+      document.getElementById("resetModal").classList.add("open");
+    }
+
+    function closeResetModal() {
+      document.getElementById("resetModal").classList.remove("open");
+    }
+
+    function confirmReset() {
+      state = getDefaultState();
+      saveState();
+      closeResetModal();
+      renderAll();
+      showToast("All fields reset to defaults");
+    }
+
+    // Initialize on load
+    renderAll();
   </script>
 </body>
 </html>
