@@ -1,1480 +1,1622 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#075e54" />
-  <link rel="manifest" href="./manifest.json" />
-  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
-  <title>WhatsApp Shift Report Generator</title>
-  <style>
-    :root {
-      --primary: #075e54;
-      --primary-light: #128c7e;
-      --accent: #25d366;
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --border: #cbd5e1;
-      --danger: #dc2626;
-      --wa-bg: #efeae2;
-      --wa-bubble: #dcf8c6;
-    }
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      padding-bottom: 92px;
-    }
-    header {
-      background: var(--primary);
-      color: #fff;
-      padding: 14px 16px;
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
-    }
-    header h1 {
-      margin: 0;
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-    }
-    .btn-reset {
-      background: #ef4444;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 7px 13px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-reset:active {
-      opacity: 0.85;
-    }
-    .container {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 12px;
-    }
-    .card {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 12px;
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
-      border: 1px solid #e2e8f0;
-    }
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      gap: 8px;
-    }
-    .card-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin: 0;
-    }
-    label {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--muted);
-      margin-bottom: 5px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .grid-3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-    }
-    input[type="text"],
-    input[type="number"],
-    input[type="date"],
-    textarea,
-    select {
-      width: 100%;
-      padding: 9px 11px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-family: inherit;
-      color: var(--text);
-      background: #fff;
-    }
-    input:focus,
-    textarea:focus {
-      outline: none;
-      border-color: var(--primary-light);
-      box-shadow: 0 0 0 2px rgba(18, 140, 126, 0.15);
-    }
-    textarea {
-      resize: none;
-      overflow: hidden;
-      min-height: 40px;
-      line-height: 1.4;
-    }
-    .bubble-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .bubble {
-      border: 1.5px solid var(--border);
-      background: #f8fafc;
-      color: var(--text);
-      padding: 7px 13px;
-      border-radius: 999px;
-      font-size: 0.86rem;
-      font-weight: 600;
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.15s ease;
-    }
-    .bubble.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #fff;
-    }
-    .segmented {
-      display: flex;
-      background: #e2e8f0;
-      padding: 3px;
-      border-radius: 9px;
-      gap: 3px;
-    }
-    .seg-btn {
-      flex: 1;
-      border: none;
-      background: transparent;
-      padding: 7px 10px;
-      border-radius: 7px;
-      font-size: 0.83rem;
-      font-weight: 600;
-      color: #475569;
-      cursor: pointer;
-    }
-    .seg-btn.active {
-      background: #fff;
-      color: var(--primary);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    }
-    .badge-calc {
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      color: #065f46;
-      border-radius: 8px;
-      padding: 8px 10px;
-      font-size: 0.84rem;
-      font-weight: 600;
-      margin-top: 8px;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .remark-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 7px;
-      margin-bottom: 8px;
-    }
-    .remark-num {
-      min-width: 26px;
-      height: 36px;
-      background: #e2e8f0;
-      color: #334155;
-      border-radius: 7px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.82rem;
-      font-weight: 700;
-    }
-    .btn-icon-del {
-      background: #fee2e2;
-      color: #b91c1c;
-      border: none;
-      border-radius: 7px;
-      width: 34px;
-      height: 36px;
-      font-weight: 700;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .btn-add {
-      background: #f1f5f9;
-      color: var(--primary);
-      border: 1px dashed var(--primary-light);
-      border-radius: 8px;
-      padding: 7px 12px;
-      font-size: 0.84rem;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 2px;
-    }
-    .wo-box {
-      border: 1px solid #e2e8f0;
-      background: #f8fafc;
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 8px;
-    }
-    .wo-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .wo-label {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    .wo-actions {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .btn-done {
-      border: 1px solid #cbd5e1;
-      background: #fff;
-      color: #475569;
-      border-radius: 6px;
-      padding: 4px 9px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-done.completed {
-      background: #16a34a;
-      border-color: #16a34a;
-      color: #fff;
-    }
-    .checkbox-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-      cursor: pointer;
-      user-select: none;
-    }
-    .checkbox-row input {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--primary);
-    }
-    .checkbox-row span {
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .preview-card {
-      background: var(--wa-bg);
-      border: 1px solid #d6cfc2;
-    }
-    .preview-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .btn-copy-sm {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 7px;
-      padding: 6px 12px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .wa-message {
-      background: var(--wa-bubble);
-      border-radius: 10px;
-      padding: 12px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      font-size: 0.9rem;
-      line-height: 1.45;
-      white-space: pre-wrap;
-      word-break: break-word;
-      color: #111b21;
-      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
-      margin-top: 10px;
-    }
-    .bottom-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #ffffff;
-      border-top: 1px solid #e2e8f0;
-      padding: 10px 14px;
-      display: flex;
-      gap: 10px;
-      z-index: 40;
-      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
-    }
-    .bottom-bar button {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .btn-copy-main {
-      background: var(--primary);
-      color: #fff;
-    }
-    .btn-wa-main {
-      background: var(--accent);
-      color: #064e3b;
-    }
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.55);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      padding: 16px;
-    }
-    .modal-backdrop.open {
-      display: flex;
-    }
-    .modal-box {
-      background: #fff;
-      border-radius: 14px;
-      padding: 18px;
-      max-width: 340px;
-      width: 100%;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    }
-    .modal-box h3 {
-      margin: 0 0 8px;
-      font-size: 1.05rem;
-      color: var(--text);
-    }
-    .modal-box p {
-      margin: 0 0 16px;
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-    .modal-btns {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-    }
-    .modal-btns button {
-      padding: 8px 14px;
-      border-radius: 8px;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-cancel {
-      background: #e2e8f0;
-      color: #334155;
-    }
-    .btn-confirm-reset {
-      background: #dc2626;
-      color: #fff;
-    }
-    .toast {
-      position: fixed;
-      top: 66px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #0f172a;
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
-      z-index: 90;
-    }
-    .toast.show {
-      opacity: 1;
-    }
-    .mt-8 { margin-top: 8px; }
-    .mt-10 { margin-top: 10px; }
-    .hidden { display: none !important; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#075e54" />
+<link rel="manifest" href="./manifest.json" />
+<link rel="icon" type="image/svg+xml" href="./icon.svg" />
+    <title>WhatsApp Shift Report Generator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        whatsapp: {
+                            light: '#dcf8c6',
+                            DEFAULT: '#25D366',
+                            dark: '#128C7E',
+                            teal: '#075E54',
+                            bg: '#efeae2'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        /* Auto-expanding textareas for full mobile visibility */
+        textarea.auto-expand {
+            overflow: hidden;
+            resize: none;
+            min-height: 46px;
+        }
+        /* WhatsApp chat bubble styling */
+        .wa-bubble {
+            position: relative;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            border-top-left-radius: 0;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.14);
+        }
+        .wa-bubble::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -8px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid #ffffff;
+            border-left: 8px solid transparent;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col pb-24 lg:pb-10">
 
-  <header>
-    <h1>Shift Report Generator</h1>
-    <button type="button" class="btn-reset" onclick="openResetModal()">Reset</button>
-  </header>
+    <!-- Top Navigation Header -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+                <div class="bg-emerald-500 p-2 rounded-xl text-slate-950 shadow-sm shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-sm sm:text-base font-extrabold tracking-tight leading-tight">WhatsApp Shift Report</h1>
+                    <p class="text-[11px] text-emerald-400 font-medium flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+                        Auto-saved locally
+                    </p>
+                </div>
+            </div>
 
-  <div id="toast" class="toast">Copied to clipboard!</div>
-
-  <div class="container">
-
-    <!-- Date, Location & Shift -->
-    <div class="card">
-      <div class="grid-2">
-        <div>
-          <label for="reportDate">Date</label>
-          <input type="date" id="reportDate" onchange="onDateChange()" />
+            <!-- Reset Button -->
+            <button type="button" id="openResetModalBtn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white shadow-sm transition active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <span>Reset</span>
+            </button>
         </div>
-        <div>
-          <label>Location</label>
-          <div class="bubble-group" id="locationBubbles">
-            <button type="button" class="bubble" data-val="Pioneer" onclick="setLocation('Pioneer')">Pioneer</button>
-            <button type="button" class="bubble" data-val="Tuas" onclick="setLocation('Tuas')">Tuas</button>
-          </div>
+    </header>
+
+    <!-- Custom Reset Confirmation Modal -->
+    <div id="resetModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200">
+            <div class="flex items-center gap-3 text-rose-600 mb-3">
+                <div class="p-2.5 bg-rose-100 rounded-xl shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-extrabold text-slate-900">Reset Shift Report?</h3>
+            </div>
+            <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                Do you want to clear every filled detail?
+            </p>
+            <div class="grid grid-cols-2 gap-3">
+                <button type="button" id="cancelResetBtn" class="py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition">
+                    Cancel
+                </button>
+                <button type="button" id="confirmResetBtn" class="py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm shadow-sm transition">
+                    Yes, Clear All
+                </button>
+            </div>
         </div>
-      </div>
-      <div class="mt-10">
-        <label>Shift</label>
-        <div class="bubble-group" id="shiftBubbles">
-          <button type="button" class="bubble" data-val="Morning" onclick="setShift('Morning')">Morning</button>
-          <button type="button" class="bubble" data-val="Night" onclick="setShift('Night')">Night</button>
-        </div>
-      </div>
     </div>
 
-    <!-- LINE 1 -->
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Line-1 Details</h2>
-        <div class="segmented" style="width: 190px;">
-          <button type="button" class="seg-btn" id="l1StatusActive" onclick="setLineStatus(1, 'active')">Active</button>
-          <button type="button" class="seg-btn" id="l1StatusNoProd" onclick="setLineStatus(1, 'noprod')">No Prod.</button>
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 transform -translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-900 text-white px-4 py-2.5 rounded-full shadow-xl border border-slate-700 flex items-center gap-2 text-xs sm:text-sm font-semibold">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span id="toastMsg">Copied to clipboard!</span>
         </div>
-      </div>
-
-      <div id="l1Body">
-        <div class="grid-3">
-          <div>
-            <label for="l1Dumping">Dumping Ops</label>
-            <input type="number" id="l1Dumping" min="0" oninput="onInputChange()" />
-          </div>
-          <div>
-            <label for="l1Packing">Packing Ops</label>
-            <input type="number" id="l1Packing" min="0" oninput="onInputChange()" />
-          </div>
-          <div>
-            <label>Total Ops</label>
-            <input type="text" id="l1TotalOps" readonly style="background:#f1f5f9; font-weight:700;" />
-          </div>
-        </div>
-
-        <div class="mt-10">
-          <label>Output Stage</label>
-          <div class="segmented">
-            <button type="button" class="seg-btn" id="l1StageCurrent" onclick="setOutputStage(1, 'current')">Current Output</button>
-            <button type="button" class="seg-btn" id="l1StageFinal" onclick="setOutputStage(1, 'final')">Final Output</button>
-          </div>
-        </div>
-
-        <div class="grid-2 mt-10">
-          <div>
-            <label for="l1Target">Target Output (MT)</label>
-            <input type="number" id="l1Target" step="0.001" oninput="onInputChange()" />
-          </div>
-          <div>
-            <label for="l1Actual" id="l1ActualLabel">Current Output (MT)</label>
-            <input type="number" id="l1Actual" step="0.001" placeholder="e.g. 29.900" oninput="onInputChange()" />
-          </div>
-        </div>
-
-        <div class="grid-2 mt-10">
-          <div>
-            <label for="l1StartTime">Start Time</label>
-            <input type="text" id="l1StartTime" placeholder="0800am" oninput="onInputChange()" />
-          </div>
-          <div>
-            <label for="l1EndTime">End Time</label>
-            <input type="text" id="l1EndTime" placeholder="0800pm" oninput="onInputChange()" />
-          </div>
-        </div>
-
-        <div class="grid-2 mt-10">
-          <div>
-            <label for="l1RunHrs">Prod. Running (Hrs)</label>
-            <input type="number" id="l1RunHrs" min="0" placeholder="8" oninput="onInputChange()" />
-          </div>
-          <div>
-            <label for="l1RunMins">Prod. Running (Mins)</label>
-            <input type="number" id="l1RunMins" min="0" max="59" placeholder="0" oninput="onInputChange()" />
-          </div>
-        </div>
-
-        <div class="badge-calc" id="l1CalcBadge">
-          <span id="l1VarDisplay">Balance Output: 0.000MT</span>
-          <span id="l1EffDisplay">Efficiency: 0.000MT/hr</span>
-        </div>
-      </div>
-
-      <div class="mt-10">
-        <label>Line-1 Remarks</label>
-        <div id="l1RemarksList"></div>
-        <button type="button" class="btn-add" onclick="addRemark(1)">+ Add Remark</button>
-      </div>
     </div>
 
-    <!-- LINE 2 -->
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Line-2 Details</h2>
-        <div class="segmented" style="width: 190px;">
-          <button type="button" class="seg-btn" id="l2StatusActive" onclick="setLineStatus(2, 'active')">Active</button>
-          <button type="button" class="seg-btn" id="l2StatusNoProd" onclick="setLineStatus(2, 'noprod')">No Prod.</button>
+    <!-- Main Content Grid -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-5">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- LEFT COLUMN: Form Controls (7 cols) -->
+            <div class="lg:col-span-7 space-y-5">
+
+                <!-- 1. Date, Location & Shift -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-4 sm:px-5 py-3 border-b border-slate-200 flex items-center justify-between">
+                        <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                            1. Date, Location &amp; Shift
+                        </h2>
+                        <span class="text-[11px] font-semibold text-slate-400">*Dear Sirs &amp; Ms.Priya,*</span>
+                    </div>
+                    <div class="p-4 sm:p-5 space-y-4">
+                        <div>
+                            <label for="reportDate" class="block text-xs font-bold text-slate-600 mb-1.5">Report Date</label>
+                            <input type="date" id="reportDate" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Location Bubbles -->
+                            <div>
+                                <span class="block text-xs font-bold text-slate-600 mb-2">Location</span>
+                                <div class="grid grid-cols-2 gap-2" id="locationBubbles">
+                                    <button type="button" data-location="Pioneer" class="loc-btn py-2.5 px-3 rounded-xl text-sm font-bold border transition text-center">Pioneer</button>
+                                    <button type="button" data-location="Tuas" class="loc-btn py-2.5 px-3 rounded-xl text-sm font-bold border transition text-center">Tuas</button>
+                                </div>
+                            </div>
+
+                            <!-- Shift Bubbles -->
+                            <div>
+                                <span class="block text-xs font-bold text-slate-600 mb-2">Shift <span class="text-rose-500 font-normal">(Select)</span></span>
+                                <div class="grid grid-cols-2 gap-2" id="shiftBubbles">
+                                    <button type="button" data-shift="Morning" class="shift-btn py-2.5 px-3 rounded-xl text-sm font-bold border transition text-center">☀️ Morning</button>
+                                    <button type="button" data-shift="Night" class="shift-btn py-2.5 px-3 rounded-xl text-sm font-bold border transition text-center">🌙 Night</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. Line-1 Production -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-4 sm:px-5 py-3 border-b border-slate-200 flex items-center justify-between gap-2">
+                        <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                            2. Line-1 Production
+                        </h2>
+                        <div class="inline-flex rounded-xl bg-slate-200/80 p-1">
+                            <button type="button" id="l1ActiveBtn" class="px-3 py-1 rounded-lg text-xs font-bold transition">Active</button>
+                            <button type="button" id="l1InactiveBtn" class="px-3 py-1 rounded-lg text-xs font-bold transition">No Prod.</button>
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 space-y-5">
+                        <div id="line1Fields" class="space-y-4">
+                            <!-- Operators -->
+                            <div class="grid grid-cols-3 gap-2.5">
+                                <div>
+                                    <label for="l1Dumping" class="block text-xs font-bold text-slate-600 mb-1">Dumping Ops</label>
+                                    <input type="number" id="l1Dumping" min="0" max="99" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono font-bold focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                                <div>
+                                    <label for="l1Packing" class="block text-xs font-bold text-slate-600 mb-1">Packing Ops</label>
+                                    <input type="number" id="l1Packing" min="0" max="99" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono font-bold focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                                <div>
+                                    <span class="block text-xs font-bold text-slate-500 mb-1">Line-1 Total</span>
+                                    <div id="l1TotalOpsDisplay" class="w-full px-3 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm font-mono font-extrabold text-slate-800">06</div>
+                                </div>
+                            </div>
+
+                            <!-- Output & Time Metrics -->
+                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-3.5">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <span class="text-xs font-extrabold uppercase tracking-wide text-slate-600">Output Mode</span>
+                                    <div class="inline-flex rounded-xl bg-slate-200 p-1">
+                                        <button type="button" id="l1ModeCurrent" class="px-3 py-1 rounded-lg text-xs font-bold transition">Current Output</button>
+                                        <button type="button" id="l1ModeFinal" class="px-3 py-1 rounded-lg text-xs font-bold transition">Final Output</button>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                                    <div>
+                                        <label for="l1Target" class="block text-xs font-bold text-slate-600 mb-1">Target (MT)</label>
+                                        <input type="number" id="l1Target" step="0.001" min="0" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-mono font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label id="l1OutputLabel" for="l1Output" class="block text-xs font-bold text-emerald-700 mb-1">Current Output (MT)</label>
+                                        <input type="number" id="l1Output" step="0.001" min="0" placeholder="0.000" class="w-full px-3 py-2.5 bg-emerald-50/70 border border-emerald-400 rounded-xl text-sm font-mono font-bold text-emerald-950 focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <span id="l1VarianceLabel" class="block text-xs font-bold text-slate-500 mb-1">Balance (MT)</span>
+                                        <div id="l1VarianceDisplay" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-mono font-extrabold text-slate-800">50.000</div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 items-end">
+                                    <div>
+                                        <label for="l1StartTime" class="block text-xs font-bold text-slate-600 mb-1">Start Time</label>
+                                        <input type="time" id="l1StartTime" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-mono font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label for="l1EndTime" class="block text-xs font-bold text-slate-600 mb-1">End Time</label>
+                                        <input type="time" id="l1EndTime" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-mono font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                                    </div>
+                                    <div class="col-span-2 sm:col-span-1">
+                                        <span class="block text-xs font-bold text-slate-500 mb-1">Operating Duration</span>
+                                        <div id="l1OpDurationDisplay" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-700 truncate">12 hrs</div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-2.5 items-end">
+                                    <div>
+                                        <label for="l1RunHrs" class="block text-xs font-bold text-slate-600 mb-1">Run Hrs</label>
+                                        <input type="number" id="l1RunHrs" min="0" max="24" placeholder="0" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-mono font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label for="l1RunMins" class="block text-xs font-bold text-slate-600 mb-1">Run Mins</label>
+                                        <input type="number" id="l1RunMins" min="0" max="59" placeholder="0" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-mono font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <span class="block text-xs font-bold text-blue-700 mb-1">Efficiency</span>
+                                        <div id="l1EfficiencyDisplay" class="w-full px-2.5 py-2.5 bg-blue-50 border border-blue-200 rounded-xl text-xs sm:text-sm font-mono font-extrabold text-blue-900">0.000</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Line-1 Remarks -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-extrabold uppercase tracking-wide text-slate-600">Line-1 Remarks</span>
+                                <button type="button" id="addL1RemarkBtn" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition active:scale-95">
+                                    + Add Remark
+                                </button>
+                            </div>
+                            <div id="line1RemarksList" class="space-y-2.5"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. Line-2 Production -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-4 sm:px-5 py-3 border-b border-slate-200 flex items-center justify-between gap-2">
+                        <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                            3. Line-2 Production
+                        </h2>
+                        <div class="inline-flex rounded-xl bg-slate-200/80 p-1">
+                            <button type="button" id="l2ActiveBtn" class="px-3 py-1 rounded-lg text-xs font-bold transition">Active</button>
+                            <button type="button" id="l2InactiveBtn" class="px-3 py-1 rounded-lg text-xs font-bold transition">No Prod.</button>
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 space-y-5">
+                        <div id="line2Fields" class="space-y-4">
+                            <!-- Operators -->
+                            <div class="grid grid-cols-3 gap-2.5">
+                                <div>
+                                    <label for="l2Dumping" class="block text-xs font-bold text-slate-600 mb-1">Dumping Ops</label>
+                                    <input type="number" id="l2Dumping" min="0" max="99" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono font-bold focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                                <div>
+                                    <label for="l2Packing" class="block text-xs font-bold text-slate-600 mb-1">Packing Ops</label>
+                                    <input type="number" id="l2Packing" min="0" max="99" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono font-bold focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                                <div>
+                                    <span class="block text-xs font-bold text-slate-500 mb-1">Line-2 Total</span>
+                                    <div id="l2TotalOpsDisplay" class="w-full px-3 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm font-mono font-extrabold text-slate-800">06</div>
+                                </div>
+                            </div>
+
+                            <!-- Output & Time Metrics -->
+                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-3.5">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <span class="text-xs font-extrabold uppercase tracking-wide text-slate-600">Output Mode</span>
+                                    <div class="inline-flex rounded-xl bg-slate-200 p-1">
+                                        <button type="button" id="l2ModeCurrent" class="px-3 py-1 rounded-lg text-xs font-bold transition">Current Output</button>
+                                        <button type="button" id="l2ModeFinal" class="px-3 py-1 rounded-lg text-xs font-bold transition">Final Output</button>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                                    <div>
+                                        <label for="l2Target" class="block text-xs font-bold text-slate-600 mb-1">Target (MT)</label>
+                                        <input type="number" id="l2Target" step="0.001" min="0" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-mono font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label id="l2OutputLabel" for="l2Output" class="block text-xs font-bold text-emerald-700 mb-1">Current Output (MT)</label>
+                                        <input type="number" id="l2Output" step="0.001" min="0" placeholder="0.000" class="w-full px-3 py-2.5 bg-emerald-50/70 border border-emerald-400 rounded-xl text-sm font-mono font-bold text-emerald-950 focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <span id="l2VarianceLabel" class="block text-xs font-bold text-slate-500 mb-1">Balance (MT)</span>
+                                        <div id="l2VarianceDisplay" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-mono font-extrabold text-slate-800">33.000</div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 items-end">
+                                    <div>
+                                        <label for="l2StartTime" class="block text-xs font-bold text-slate-600 mb-1">Start Time</label>
+                                        <input type="time" id="l2StartTime" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-mono font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label for="l2EndTime" class="block text-xs font-bold text-slate-600 mb-1">End Time</label>
+                                        <input type="time" id="l2EndTime" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-mono font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                                    </div>
+                                    <div class="col-span-2 sm:col-span-1">
+                                        <span class="block text-xs font-bold text-slate-500 mb-1">Operating Duration</span>
+                                        <div id="l2OpDurationDisplay" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-700 truncate">12 hrs</div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-2.5 items-end">
+                                    <div>
+                                        <label for="l2RunHrs" class="block text-xs font-bold text-slate-600 mb-1">Run Hrs</label>
+                                        <input type="number" id="l2RunHrs" min="0" max="24" placeholder="0" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-mono font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label for="l2RunMins" class="block text-xs font-bold text-slate-600 mb-1">Run Mins</label>
+                                        <input type="number" id="l2RunMins" min="0" max="59" placeholder="0" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-mono font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <span class="block text-xs font-bold text-blue-700 mb-1">Efficiency</span>
+                                        <div id="l2EfficiencyDisplay" class="w-full px-2.5 py-2.5 bg-blue-50 border border-blue-200 rounded-xl text-xs sm:text-sm font-mono font-extrabold text-blue-900">0.000</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Line-2 Remarks -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-extrabold uppercase tracking-wide text-slate-600">Line-2 Remarks</span>
+                                <button type="button" id="addL2RemarkBtn" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition active:scale-95">
+                                    + Add Remark
+                                </button>
+                            </div>
+                            <div id="line2RemarksList" class="space-y-2.5"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Total Output, Batching & Labelling -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-4 sm:px-5 py-3 border-b border-slate-200">
+                        <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-purple-600"></span>
+                            4. Total Output, Batching &amp; Labelling
+                        </h2>
+                    </div>
+                    <div class="p-4 sm:p-5 space-y-4">
+                        <!-- Total Output Checkbox -->
+                        <label for="showTotalOutput" class="flex items-center justify-between p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200 cursor-pointer select-none">
+                            <div class="flex items-center gap-3">
+                                <input type="checkbox" id="showTotalOutput" class="w-5 h-5 rounded-md text-emerald-600 focus:ring-emerald-500 border-slate-300">
+                                <div>
+                                    <span class="text-sm font-bold text-slate-900 block">Include Total Output Line</span>
+                                    <span class="text-[11px] text-slate-500">Placed right after Line-2 in Interval / Final report</span>
+                                </div>
+                            </div>
+                            <span class="text-sm font-mono font-extrabold text-emerald-800 bg-white px-2.5 py-1 rounded-lg border border-emerald-200">
+                                <span id="totalOutputBadge">0.000</span>MT
+                            </span>
+                        </label>
+
+                        <!-- Batching -->
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-1.5">
+                                <label for="batchingInput" class="text-xs font-bold text-slate-600">Batching Manpower</label>
+                                <button type="button" id="batchingNilBtn" class="px-3 py-1 rounded-lg text-xs font-bold border transition">NIL</button>
+                            </div>
+                            <input type="text" id="batchingInput" placeholder="e.g. 03 Operators or 02 Contract Workers" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+
+                        <!-- Labelling -->
+                        <div>
+                            <label for="labellingText" class="block text-xs font-bold text-slate-600 mb-1.5">Labelling Details</label>
+                            <textarea id="labellingText" rows="2" placeholder="e.g. WO 0798 (7200pcs) & 0588 (5040pcs) or 01 People & Me Stickers Work..." class="auto-expand w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. Production Supervisors & QC -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-4 sm:px-5 py-3 border-b border-slate-200">
+                        <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                            5. Production Supervisor &amp; QC
+                        </h2>
+                    </div>
+                    <div class="p-4 sm:p-5 space-y-4">
+                        <div>
+                            <span class="block text-xs font-bold text-slate-600 mb-2">Production Supervisors <span class="text-slate-400 font-normal">(Select one or more)</span></span>
+                            <div class="flex flex-wrap gap-2" id="supervisorBubbles">
+                                <button type="button" data-sup="Balaji" class="sup-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition">Balaji</button>
+                                <button type="button" data-sup="Anson" class="sup-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition">Anson</button>
+                                <button type="button" data-sup="Chi Hui" class="sup-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition">Chi Hui</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="block text-xs font-bold text-slate-600 mb-2">QC Personnel <span class="text-slate-400 font-normal">(Select one or more)</span></span>
+                            <div class="flex flex-wrap gap-2" id="qcBubbles">
+                                <button type="button" data-qc="Mohan" class="qc-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition">Mohan</button>
+                                <button type="button" data-qc="Kishore" class="qc-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition">Kishore</button>
+                                <button type="button" data-qc="Vidhya" class="qc-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition">Vidhya</button>
+                                <button type="button" data-qc="Kirthana" class="qc-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition">Kirthana</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. Leave & Attendance -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-4 sm:px-5 py-3 border-b border-slate-200 flex items-center justify-between gap-2">
+                        <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
+                            6. Leave &amp; Attendance
+                        </h2>
+                        <button type="button" id="allPresentBtn" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition">
+                            All Present
+                        </button>
+                    </div>
+                    <div class="p-4 sm:p-5">
+                        <div id="allPresentBanner" class="hidden p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs sm:text-sm font-bold text-emerald-800">
+                            ✓ Will output: Leave: All Present.
+                        </div>
+                        <div id="leaveTextWrap">
+                            <label for="leaveText" class="block text-xs font-bold text-slate-500 mb-1.5">Enter names (one per line — expands automatically):</label>
+                            <textarea id="leaveText" rows="2" placeholder="e.g.&#10;Arjun - UPL&#10;Fan Lu Qian - AL" class="auto-expand w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. Product & WO Details (Tabbed for Line 1 & Line 2) -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-4 sm:px-5 py-3 border-b border-slate-200 flex items-center justify-between gap-2">
+                        <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-cyan-600"></span>
+                            7. Product &amp; WO Details
+                        </h2>
+                        <!-- Line 1 / Line 2 Tab Switcher -->
+                        <div class="inline-flex rounded-xl bg-slate-200/80 p-1">
+                            <button type="button" id="woTabL1Btn" class="px-3 py-1 rounded-lg text-xs font-bold transition">Line 1</button>
+                            <button type="button" id="woTabL2Btn" class="px-3 py-1 rounded-lg text-xs font-bold transition">Line 2</button>
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5">
+                        <!-- Line 1 WOs Panel -->
+                        <div id="woPanelL1" class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-extrabold uppercase tracking-wide text-slate-600">*Line 1:* Work Orders</span>
+                                <button type="button" id="addL1WoBtn" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition active:scale-95">
+                                    + Add WO
+                                </button>
+                            </div>
+                            <div id="l1WoList" class="space-y-3"></div>
+                        </div>
+
+                        <!-- Line 2 WOs Panel -->
+                        <div id="woPanelL2" class="hidden space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-extrabold uppercase tracking-wide text-slate-600">*Line 2:* Work Orders</span>
+                                <button type="button" id="addL2WoBtn" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition active:scale-95">
+                                    + Add WO
+                                </button>
+                            </div>
+                            <div id="l2WoList" class="space-y-3"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 8. Sign-Off / Sender's Name -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-4 sm:px-5 py-3 border-b border-slate-200 flex items-center justify-between">
+                        <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+                            8. Sender's Name / Sign-Off
+                        </h2>
+                        <span class="text-[11px] text-slate-400 font-medium">Auto-synced with Supervisors</span>
+                    </div>
+                    <div class="p-4 sm:p-5 space-y-3">
+                        <div class="flex flex-wrap gap-2" id="signOffBubbles">
+                            <button type="button" data-sign="N. Balaji" class="sign-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition">N. Balaji</button>
+                            <button type="button" data-sign="Anson" class="sign-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition">Anson</button>
+                            <button type="button" data-sign="Chi Hui" class="sign-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition">Chi Hui</button>
+                        </div>
+                        <div>
+                            <label for="customSignOff" class="sr-only">Custom Sign-Off Name</label>
+                            <input type="text" id="customSignOff" placeholder="Or type custom sign-off name..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- RIGHT COLUMN: WhatsApp Live Preview (5 cols) -->
+            <div class="lg:col-span-5 lg:sticky lg:top-16 space-y-4">
+                <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex flex-col">
+                    <!-- Preview Header with Quick Copy -->
+                    <div class="bg-whatsapp-teal text-white px-4 py-3 flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center font-extrabold text-xs shrink-0">
+                                WA
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold leading-tight">WhatsApp Preview</h3>
+                                <p class="text-[11px] text-emerald-100/85">Live formatted message</p>
+                            </div>
+                        </div>
+                        <button type="button" id="previewCopyBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 active:bg-emerald-500 text-slate-950 font-extrabold text-xs shadow-sm transition active:scale-95 shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+
+                    <!-- Stage Switcher (ONLY changes preview text, never hides inputs) -->
+                    <div class="bg-slate-900 p-2.5 border-b border-slate-800">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" id="stageStartBtn" class="py-2.5 px-3 rounded-xl text-xs font-extrabold transition flex items-center justify-center gap-1.5">
+                                <span>🚀</span>
+                                <span>Start of Shift</span>
+                            </button>
+                            <button type="button" id="stageOutputBtn" class="py-2.5 px-3 rounded-xl text-xs font-extrabold transition flex items-center justify-center gap-1.5">
+                                <span>📊</span>
+                                <span>Interval / Final</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chat Wallpaper Preview -->
+                    <div class="bg-whatsapp-bg p-4 sm:p-5" style="background-image: radial-gradient(#cbd5e1 0.8px, transparent 0.8px); background-size: 16px 16px;">
+                        <div class="wa-bubble p-3.5 sm:p-4 text-[13.5px] leading-[1.48] text-slate-900 font-sans break-words">
+                            <div id="whatsappPreviewRendered" class="whitespace-pre-wrap"></div>
+                            <div class="text-right mt-2 flex items-center justify-end gap-1 text-[10px] text-slate-400 select-none">
+                                <span id="previewTimestamp">08:00</span>
+                                <svg class="w-3.5 h-3.5 text-sky-500" viewBox="0 0 16 15" fill="currentColor">
+                                    <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.879a.32.32 0 0 1-.484.033l-.358-.325a.319.319 0 0 0-.484.032l-.378.483a.418.418 0 0 0 .036.541l1.32 1.266c.143.14.361.125.484-.033l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden Raw Textarea for Reliable Clipboard Copy -->
+                    <textarea id="rawOutputText" class="sr-only" aria-hidden="true"></textarea>
+
+                    <!-- Desktop Action Buttons -->
+                    <div class="hidden lg:grid p-4 bg-slate-50 border-t border-slate-200 grid-cols-2 gap-3">
+                        <button type="button" id="desktopCopyBtn" class="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition active:scale-95">
+                            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                            <span>Copy Report</span>
+                        </button>
+                        <button type="button" id="desktopWaBtn" class="w-full py-3 px-4 rounded-xl bg-whatsapp hover:bg-whatsapp-dark text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition active:scale-95">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/>
+                            </svg>
+                            <span>Send to WhatsApp</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </div>
-      </div>
+    </main>
 
-      <div id="l2Body">
-        <div class="grid-3">
-          <div>
-            <label for="l2Dumping">Dumping Ops</label>
-            <input type="number" id="l2Dumping" min="0" oninput="onInputChange()" />
-          </div>
-          <div>
-            <label for="l2Packing">Packing Ops</label>
-            <input type="number" id="l2Packing" min="0" oninput="onInputChange()" />
-          </div>
-          <div>
-            <label>Total Ops</label>
-            <input type="text" id="l2TotalOps" readonly style="background:#f1f5f9; font-weight:700;" />
-          </div>
+    <!-- Sticky Bottom Action Bar (Mobile / Tablet) -->
+    <div class="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+        <div class="max-w-xl mx-auto grid grid-cols-2 gap-2.5">
+            <button type="button" id="mobileCopyBtn" class="py-3 px-4 rounded-xl bg-slate-900 active:bg-slate-800 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                <span>Copy Report</span>
+            </button>
+            <button type="button" id="mobileWaBtn" class="py-3 px-4 rounded-xl bg-whatsapp active:bg-whatsapp-dark text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/>
+                </svg>
+                <span>Send to WhatsApp</span>
+            </button>
         </div>
-
-        <div class="mt-10">
-          <label>Output Stage</label>
-          <div class="segmented">
-            <button type="button" class="seg-btn" id="l2StageCurrent" onclick="setOutputStage(2, 'current')">Current Output</button>
-            <button type="button" class="seg-btn" id="l2StageFinal" onclick="setOutputStage(2, 'final')">Final Output</button>
-          </div>
-        </div>
-
-        <div class="grid-2 mt-10">
-          <div>
-            <label for="l2Target">Target Output (MT)</label>
-            <input type="number" id="l2Target" step="0.001" oninput="onInputChange()" />
-          </div>
-          <div>
-            <label for="l2Actual" id="l2ActualLabel">Current Output (MT)</label>
-            <input type="number" id="l2Actual" step="0.001" placeholder="e.g. 15.000" oninput="onInputChange()" />
-          </div>
-        </div>
-
-        <div class="grid-2 mt-10">
-          <div>
-            <label for="l2StartTime">Start Time</label>
-            <input type="text" id="l2StartTime" placeholder="0800am" oninput="onInputChange()" />
-          </div>
-          <div>
-            <label for="l2EndTime">End Time</label>
-            <input type="text" id="l2EndTime" placeholder="0800pm" oninput="onInputChange()" />
-          </div>
-        </div>
-
-        <div class="grid-2 mt-10">
-          <div>
-            <label for="l2RunHrs">Prod. Running (Hrs)</label>
-            <input type="number" id="l2RunHrs" min="0" placeholder="8" oninput="onInputChange()" />
-          </div>
-          <div>
-            <label for="l2RunMins">Prod. Running (Mins)</label>
-            <input type="number" id="l2RunMins" min="0" max="59" placeholder="0" oninput="onInputChange()" />
-          </div>
-        </div>
-
-        <div class="badge-calc" id="l2CalcBadge">
-          <span id="l2VarDisplay">Balance Output: 0.000MT</span>
-          <span id="l2EffDisplay">Efficiency: 0.000MT/hr</span>
-        </div>
-      </div>
-
-      <div class="mt-10">
-        <label>Line-2 Remarks</label>
-        <div id="l2RemarksList"></div>
-        <button type="button" class="btn-add" onclick="addRemark(2)">+ Add Remark</button>
-      </div>
-
-      <label class="checkbox-row mt-10">
-        <input type="checkbox" id="showTotalOutput" onchange="onInputChange()" />
-        <span>Include Total Output Line (Right after Line-2)</span>
-      </label>
     </div>
 
-    <!-- Batching & Labelling -->
-    <div class="card">
-      <h2 class="card-title" style="margin-bottom: 10px;">Batching & Labelling</h2>
-      <div>
-        <label for="batchingInput">Batching Operators</label>
-        <div style="display:flex; gap:8px;">
-          <input type="text" id="batchingInput" placeholder="e.g. 05 Operators or 3 Contract" oninput="onInputChange()" />
-          <button type="button" class="bubble" id="batchingNilBtn" onclick="toggleBatchingNil()">Nil</button>
-        </div>
-      </div>
-      <div class="mt-10">
-        <label for="labellingInput">Labelling Details</label>
-        <textarea id="labellingInput" rows="1" placeholder="e.g. WO: PRD26-0759 (4000pcs)" oninput="autoResize(this); onInputChange()"></textarea>
-      </div>
-    </div>
-
-    <!-- Supervisors, QC & Leave -->
-    <div class="card">
-      <h2 class="card-title" style="margin-bottom: 10px;">Supervisors, QC & Leave</h2>
-      <div>
-        <label>Production Supervisors (Multi-Select)</label>
-        <div class="bubble-group" id="supBubbles"></div>
-      </div>
-      <div class="mt-10">
-        <label>QC Personnel (Multi-Select)</label>
-        <div class="bubble-group" id="qcBubbles"></div>
-      </div>
-      <div class="mt-10">
-        <div class="card-header" style="margin-bottom: 6px;">
-          <label style="margin:0;">Leave / Attendance</label>
-          <button type="button" class="bubble" id="allPresentBtn" onclick="toggleAllPresent()">All Present</button>
-        </div>
-        <textarea id="leaveInput" rows="2" placeholder="Enter names & leave types (e.g. Gan Chi Hui - AL)" oninput="autoResize(this); onLeaveTextChange()"></textarea>
-      </div>
-    </div>
-
-    <!-- Product & WO Details -->
-    <div class="card">
-      <h2 class="card-title" style="margin-bottom: 10px;">Product & WO Details</h2>
-
-      <label>Line 1 Products / WOs</label>
-      <div id="l1WoList"></div>
-      <button type="button" class="btn-add" onclick="addWo(1)">+ Add Line 1 WO</button>
-
-      <div class="mt-10">
-        <label>Line 2 Products / WOs</label>
-        <div id="l2WoList"></div>
-        <button type="button" class="btn-add" onclick="addWo(2)">+ Add Line 2 WO</button>
-      </div>
-    </div>
-
-    <!-- Sender Sign-Off -->
-    <div class="card">
-      <h2 class="card-title" style="margin-bottom: 8px;">Sender Sign-Off</h2>
-      <div class="bubble-group" id="senderBubbles"></div>
-      <div class="mt-8">
-        <input type="text" id="senderCustom" placeholder="Or type custom sign-off name..." oninput="onInputChange()" />
-      </div>
-    </div>
-
-    <!-- WhatsApp Message Preview -->
-    <div class="card preview-card">
-      <div class="preview-header">
-        <h2 class="card-title" style="margin:0;">WhatsApp Preview</h2>
-        <button type="button" class="btn-copy-sm" onclick="copyReport()">Copy</button>
-      </div>
-
-      <div class="segmented">
-        <button type="button" class="seg-btn" id="modeStartBtn" onclick="setPreviewMode('start')">Start of Shift</button>
-        <button type="button" class="seg-btn" id="modeIntervalBtn" onclick="setPreviewMode('interval')">Interval / Final</button>
-      </div>
-
-      <div class="wa-message" id="previewBox"></div>
-    </div>
-
-  </div>
-
-  <!-- Bottom Sticky Actions -->
-  <div class="bottom-bar">
-    <button type="button" class="btn-copy-main" onclick="copyReport()">Copy Report</button>
-    <button type="button" class="btn-wa-main" onclick="shareWhatsApp()">Send to WhatsApp</button>
-  </div>
-
-  <!-- Reset Confirmation Modal -->
-  <div class="modal-backdrop" id="resetModal">
-    <div class="modal-box">
-      <h3>Reset Shift Report?</h3>
-      <p>Do you want to clear every filled detail and restore default values for a new shift?</p>
-      <div class="modal-btns">
-        <button type="button" class="btn-cancel" onclick="closeResetModal()">Cancel</button>
-        <button type="button" class="btn-confirm-reset" onclick="confirmReset()">Yes, Clear All</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const STORAGE_KEY = "anbros_shift_report_v3";
-    const SUPERVISORS = ["Balaji", "Anson", "Chi Hui"];
-    const QCS = ["Mohan", "Kishore", "Vidhya", "Kirthana"];
-    const SENDER_OPTIONS = ["N. Balaji", "Anson", "Chi Hui"];
-
-    function getTodayISO() {
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = String(now.getMonth() + 1).padStart(2, "0");
-      const d = String(now.getDate()).padStart(2, "0");
-      return y + "-" + m + "-" + d;
-    }
-
-    function formatDisplayDate(isoStr) {
-      if (!isoStr) return "";
-      const parts = isoStr.split("-");
-      if (parts.length !== 3) return isoStr;
-      return parts[2] + "/" + parts[1] + "/" + parts[0];
-    }
-
-    function pad2(val) {
-      const n = parseInt(val, 10);
-      if (isNaN(n)) return "00";
-      return n < 10 ? "0" + n : String(n);
-    }
-
-    function getDefaultState() {
-      return {
-        date: getTodayISO(),
-        location: "Pioneer",
-        shift: "",
-        previewMode: "interval",
-        showTotalOutput: false,
-        line1: {
-          status: "active",
-          dumping: 4,
-          packing: 2,
-          stage: "current",
-          target: 50,
-          actual: "",
-          startTime: "0800am",
-          endTime: "0800pm",
-          runHrs: "",
-          runMins: "",
-          remarks: ["Line 1 starts at 0800am."]
-        },
-        line2: {
-          status: "noprod",
-          dumping: 4,
-          packing: 2,
-          stage: "current",
-          target: 33,
-          actual: "",
-          startTime: "0800am",
-          endTime: "0800pm",
-          runHrs: "",
-          runMins: "",
-          remarks: []
-        },
-        batching: "",
-        labelling: "",
-        supervisors: [],
-        qcs: [],
-        allPresent: false,
-        leaveText: "",
-        l1Wos: [{ name: "", wo: "", completed: false }],
-        l2Wos: [{ name: "", wo: "", completed: false }],
-        senders: [],
-        senderCustom: ""
-      };
-    }
-
-    let state = loadState();
-
-    function loadState() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return getDefaultState();
-        const parsed = JSON.parse(raw);
-        return Object.assign(getDefaultState(), parsed);
-      } catch (e) {
-        return getDefaultState();
-      }
-    }
-
-    function saveState() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      } catch (e) {}
-    }
-
-    function autoResize(el) {
-      if (!el) return;
-      el.style.height = "auto";
-      el.style.height = el.scrollHeight + "px";
-    }
-
-    function parseTimeMinutes(str) {
-      if (!str) return null;
-      const clean = str.trim().toLowerCase().replace(/\s+/g, "");
-      const match = clean.match(/^(\d{1,2}):?(\d{2})(am|pm)$/);
-      if (!match) return null;
-      let hh = parseInt(match[1], 10);
-      const mm = parseInt(match[2], 10);
-      const mer = match[3];
-      if (hh < 1 || hh > 12 || mm > 59) return null;
-      if (mer === "am") {
-        if (hh === 12) hh = 0;
-      } else {
-        if (hh !== 12) hh += 12;
-      }
-      return hh * 60 + mm;
-    }
-
-    function formatDuration(startStr, endStr) {
-      const s = parseTimeMinutes(startStr);
-      const e = parseTimeMinutes(endStr);
-      if (s === null || e === null) return "";
-      let diff = e - s;
-      if (diff <= 0) diff += 24 * 60;
-      const hrs = Math.floor(diff / 60);
-      const mins = diff % 60;
-      if (mins === 0) return "(" + hrs + "hrs)";
-      return "(" + hrs + "hrs " + mins + "mins)";
-    }
-
-    function renderAll() {
-      document.getElementById("reportDate").value = state.date;
-
-      document.querySelectorAll("#locationBubbles .bubble").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.val === state.location);
-      });
-      document.querySelectorAll("#shiftBubbles .bubble").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.val === state.shift);
-      });
-
-      renderLineUI(1, state.line1);
-      renderLineUI(2, state.line2);
-
-      document.getElementById("showTotalOutput").checked = !!state.showTotalOutput;
-
-      document.getElementById("batchingInput").value = state.batching;
-      document.getElementById("batchingNilBtn").classList.toggle("active", state.batching.trim().toLowerCase() === "nil");
-
-      const labEl = document.getElementById("labellingInput");
-      labEl.value = state.labelling;
-      autoResize(labEl);
-
-      // Supervisors
-      const supWrap = document.getElementById("supBubbles");
-      supWrap.innerHTML = "";
-      SUPERVISORS.forEach(name => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "bubble" + (state.supervisors.includes(name) ? " active" : "");
-        b.textContent = name;
-        b.onclick = () => toggleSupervisor(name);
-        supWrap.appendChild(b);
-      });
-
-      // QCs
-      const qcWrap = document.getElementById("qcBubbles");
-      qcWrap.innerHTML = "";
-      QCS.forEach(name => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "bubble" + (state.qcs.includes(name) ? " active" : "");
-        b.textContent = name;
-        b.onclick = () => toggleQc(name);
-        qcWrap.appendChild(b);
-      });
-
-      // Leave
-      document.getElementById("allPresentBtn").classList.toggle("active", !!state.allPresent);
-      const leaveEl = document.getElementById("leaveInput");
-      leaveEl.value = state.leaveText;
-      autoResize(leaveEl);
-
-      // WOs
-      renderWoList(1, state.l1Wos);
-      renderWoList(2, state.l2Wos);
-
-      // Senders
-      const sndWrap = document.getElementById("senderBubbles");
-      sndWrap.innerHTML = "";
-      SENDER_OPTIONS.forEach(name => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "bubble" + (state.senders.includes(name) ? " active" : "");
-        b.textContent = name;
-        b.onclick = () => toggleSender(name);
-        sndWrap.appendChild(b);
-      });
-      document.getElementById("senderCustom").value = state.senderCustom;
-
-      // Preview mode
-      document.getElementById("modeStartBtn").classList.toggle("active", state.previewMode === "start");
-      document.getElementById("modeIntervalBtn").classList.toggle("active", state.previewMode === "interval");
-
-      updatePreview();
-    }
-
-    function renderLineUI(num, line) {
-      const p = "l" + num;
-      const isActive = line.status === "active";
-      document.getElementById(p + "StatusActive").classList.toggle("active", isActive);
-      document.getElementById(p + "StatusNoProd").classList.toggle("active", !isActive);
-      document.getElementById(p + "Body").classList.toggle("hidden", !isActive);
-
-      document.getElementById(p + "Dumping").value = line.dumping;
-      document.getElementById(p + "Packing").value = line.packing;
-      const totalOps = (parseInt(line.dumping, 10) || 0) + (parseInt(line.packing, 10) || 0);
-      document.getElementById(p + "TotalOps").value = pad2(totalOps) + " Operators";
-
-      document.getElementById(p + "StageCurrent").classList.toggle("active", line.stage === "current");
-      document.getElementById(p + "StageFinal").classList.toggle("active", line.stage === "final");
-      document.getElementById(p + "ActualLabel").textContent = line.stage === "final" ? "Final Output (MT)" : "Current Output (MT)";
-
-      document.getElementById(p + "Target").value = line.target;
-      document.getElementById(p + "Actual").value = line.actual;
-      document.getElementById(p + "StartTime").value = line.startTime;
-      document.getElementById(p + "EndTime").value = line.endTime;
-      document.getElementById(p + "RunHrs").value = line.runHrs;
-      document.getElementById(p + "RunMins").value = line.runMins;
-
-      const calc = computeLineMetrics(line);
-      document.getElementById(p + "VarDisplay").textContent = calc.varLabel + ": " + calc.varValue.toFixed(3) + "MT";
-      document.getElementById(p + "EffDisplay").textContent = "Efficiency: " + calc.eff.toFixed(3) + "MT/hr";
-
-      // Remarks
-      const listEl = document.getElementById(p + "RemarksList");
-      listEl.innerHTML = "";
-      line.remarks.forEach((txt, idx) => {
-        const row = document.createElement("div");
-        row.className = "remark-row";
-
-        const badge = document.createElement("div");
-        badge.className = "remark-num";
-        badge.textContent = idx + 1;
-
-        const ta = document.createElement("textarea");
-        ta.rows = 1;
-        ta.value = txt;
-        ta.placeholder = "Enter remark...";
-        ta.oninput = function () {
-          autoResize(this);
-          line.remarks[idx] = this.value;
-          saveState();
-          updatePreview();
-        };
-
-        const del = document.createElement("button");
-        del.type = "button";
-        del.className = "btn-icon-del";
-        del.textContent = "×";
-        del.onclick = function () {
-          line.remarks.splice(idx, 1);
-          saveState();
-          renderLineUI(num, line);
-          updatePreview();
-        };
-
-        row.appendChild(badge);
-        row.appendChild(ta);
-        row.appendChild(del);
-        listEl.appendChild(row);
-        autoResize(ta);
-      });
-    }
-
-    function renderWoList(num, list) {
-      const container = document.getElementById("l" + num + "WoList");
-      container.innerHTML = "";
-      list.forEach((item, idx) => {
-        const box = document.createElement("div");
-        box.className = "wo-box";
-
-        const top = document.createElement("div");
-        top.className = "wo-top";
-
-        const lbl = document.createElement("span");
-        lbl.className = "wo-label";
-        lbl.textContent = "Item #" + (idx + 1);
-
-        const acts = document.createElement("div");
-        acts.className = "wo-actions";
-
-        const doneBtn = document.createElement("button");
-        doneBtn.type = "button";
-        doneBtn.className = "btn-done" + (item.completed ? " completed" : "");
-        doneBtn.textContent = item.completed ? "✓ Completed" : "Completed";
-        doneBtn.onclick = () => {
-          item.completed = !item.completed;
-          saveState();
-          renderWoList(num, list);
-          updatePreview();
-        };
-
-        acts.appendChild(doneBtn);
-
-        if (list.length > 1) {
-          const delBtn = document.createElement("button");
-          delBtn.type = "button";
-          delBtn.className = "btn-icon-del";
-          delBtn.style.height = "26px";
-          delBtn.style.width = "26px";
-          delBtn.textContent = "×";
-          delBtn.onclick = () => {
-            list.splice(idx, 1);
-            saveState();
-            renderWoList(num, list);
-            updatePreview();
-          };
-          acts.appendChild(delBtn);
-        }
-
-        top.appendChild(lbl);
-        top.appendChild(acts);
-
-        const grid = document.createElement("div");
-        grid.className = "grid-2";
-
-        const nameInp = document.createElement("input");
-        nameInp.type = "text";
-        nameInp.placeholder = "Product Name";
-        nameInp.value = item.name;
-        nameInp.oninput = function () {
-          item.name = this.value;
-          saveState();
-          updatePreview();
-        };
-
-        const woInp = document.createElement("input");
-        woInp.type = "text";
-        woInp.placeholder = "WO (e.g. PRD26-0759)";
-        woInp.value = item.wo;
-        woInp.oninput = function () {
-          item.wo = this.value;
-          saveState();
-          updatePreview();
-        };
-
-        grid.appendChild(nameInp);
-        grid.appendChild(woInp);
-
-        box.appendChild(top);
-        box.appendChild(grid);
-        container.appendChild(box);
-      });
-    }
-
-    function computeLineMetrics(line) {
-      const target = parseFloat(line.target) || 0;
-      const actual = parseFloat(line.actual) || 0;
-      const diff = actual - target;
-
-      let varLabel = "Balance Output";
-      let varValue = 0;
-      if (diff > 0) {
-        varLabel = "Gain Output";
-        varValue = diff;
-      } else {
-        varValue = Math.abs(diff);
-        varLabel = line.stage === "final" ? "Loss Output" : "Balance Output";
-      }
-
-      const hrs = parseFloat(line.runHrs) || 0;
-      const mins = parseFloat(line.runMins) || 0;
-      const totalHrs = hrs + mins / 60;
-      const eff = totalHrs > 0 ? actual / totalHrs : 0;
-
-      return { target, actual, varLabel, varValue, eff };
-    }
-
-    function setLocation(loc) {
-      state.location = loc;
-      saveState();
-      renderAll();
-    }
-
-    function setShift(shift) {
-      state.shift = shift;
-      const isNight = shift === "Night";
-      const sTime = isNight ? "0800pm" : "0800am";
-      const eTime = isNight ? "0800am" : "0800pm";
-
-      [1, 2].forEach(num => {
-        const line = num === 1 ? state.line1 : state.line2;
-        line.startTime = sTime;
-        line.endTime = eTime;
-        if (line.status === "active") {
-          if (line.remarks.length === 0 || /^Line [12] starts at 0800(am|pm)\.?$/i.test(line.remarks[0].trim())) {
-            line.remarks[0] = "Line " + num + " starts at " + sTime + ".";
-          }
-        }
-      });
-
-      saveState();
-      renderAll();
-    }
-
-    function setLineStatus(num, status) {
-      const line = num === 1 ? state.line1 : state.line2;
-      line.status = status;
-      if (status === "noprod") {
-        line.remarks = line.remarks.filter(r => !/^Line [12] starts at 0800(am|pm)\.?$/i.test(r.trim()));
-      } else if (status === "active" && line.remarks.length === 0) {
-        const sTime = state.shift === "Night" ? "0800pm" : "0800am";
-        line.remarks = ["Line " + num + " starts at " + sTime + "."];
-      }
-      saveState();
-      renderAll();
-    }
-
-    function setOutputStage(num, stage) {
-      const line = num === 1 ? state.line1 : state.line2;
-      line.stage = stage;
-      saveState();
-      renderAll();
-    }
-
-    function addRemark(num) {
-      const line = num === 1 ? state.line1 : state.line2;
-      line.remarks.push("");
-      saveState();
-      renderLineUI(num, line);
-    }
-
-    function addWo(num) {
-      const list = num === 1 ? state.l1Wos : state.l2Wos;
-      list.push({ name: "", wo: "", completed: false });
-      saveState();
-      renderWoList(num, list);
-    }
-
-    function toggleBatchingNil() {
-      if (state.batching.trim().toLowerCase() === "nil") {
-        state.batching = "";
-      } else {
-        state.batching = "Nil";
-      }
-      saveState();
-      renderAll();
-    }
-
-    function toggleSupervisor(name) {
-      const idx = state.supervisors.indexOf(name);
-      if (idx >= 0) {
-        state.supervisors.splice(idx, 1);
-      } else {
-        state.supervisors.push(name);
-      }
-      // Sync sender bubbles automatically
-      state.senders = state.supervisors.map(s => (s === "Balaji" ? "N. Balaji" : s));
-      saveState();
-      renderAll();
-    }
-
-    function toggleQc(name) {
-      const idx = state.qcs.indexOf(name);
-      if (idx >= 0) {
-        state.qcs.splice(idx, 1);
-      } else {
-        state.qcs.push(name);
-      }
-      saveState();
-      renderAll();
-    }
-
-    function toggleSender(name) {
-      const idx = state.senders.indexOf(name);
-      if (idx >= 0) {
-        state.senders.splice(idx, 1);
-      } else {
-        state.senders.push(name);
-      }
-      saveState();
-      renderAll();
-    }
-
-    function toggleAllPresent() {
-      state.allPresent = !state.allPresent;
-      if (state.allPresent) {
-        state.leaveText = "All Present.";
-      } else if (state.leaveText === "All Present.") {
-        state.leaveText = "";
-      }
-      saveState();
-      renderAll();
-    }
-
-    function onLeaveTextChange() {
-      state.leaveText = document.getElementById("leaveInput").value;
-      state.allPresent = state.leaveText.trim().toLowerCase() === "all present.";
-      document.getElementById("allPresentBtn").classList.toggle("active", state.allPresent);
-      saveState();
-      updatePreview();
-    }
-
-    function setPreviewMode(mode) {
-      state.previewMode = mode;
-      saveState();
-      renderAll();
-    }
-
-    function onDateChange() {
-      state.date = document.getElementById("reportDate").value;
-      saveState();
-      updatePreview();
-    }
-
-    function onInputChange() {
-      [1, 2].forEach(num => {
-        const p = "l" + num;
-        const line = num === 1 ? state.line1 : state.line2;
-        line.dumping = document.getElementById(p + "Dumping").value;
-        line.packing = document.getElementById(p + "Packing").value;
-        line.target = document.getElementById(p + "Target").value;
-        line.actual = document.getElementById(p + "Actual").value;
-        line.startTime = document.getElementById(p + "StartTime").value;
-        line.endTime = document.getElementById(p + "EndTime").value;
-        line.runHrs = document.getElementById(p + "RunHrs").value;
-        line.runMins = document.getElementById(p + "RunMins").value;
-
-        const totalOps = (parseInt(line.dumping, 10) || 0) + (parseInt(line.packing, 10) || 0);
-        document.getElementById(p + "TotalOps").value = pad2(totalOps) + " Operators";
-
-        const calc = computeLineMetrics(line);
-        document.getElementById(p + "VarDisplay").textContent = calc.varLabel + ": " + calc.varValue.toFixed(3) + "MT";
-        document.getElementById(p + "EffDisplay").textContent = "Efficiency: " + calc.eff.toFixed(3) + "MT/hr";
-      });
-
-      state.showTotalOutput = document.getElementById("showTotalOutput").checked;
-      state.batching = document.getElementById("batchingInput").value;
-      document.getElementById("batchingNilBtn").classList.toggle("active", state.batching.trim().toLowerCase() === "nil");
-      state.labelling = document.getElementById("labellingInput").value;
-      state.senderCustom = document.getElementById("senderCustom").value;
-
-      saveState();
-      updatePreview();
-    }
-
-    function formatJoinNames(arr) {
-      if (!arr || arr.length === 0) return "";
-      if (arr.length === 1) return arr[0];
-      if (arr.length === 2) return arr[0] + " & " + arr[1];
-      return arr.slice(0, -1).join(", ") + " & " + arr[arr.length - 1];
-    }
-
-    function buildLineBlock(num, line, isStartMode) {
-      const out = [];
-      if (line.status === "noprod") {
-        out.push("Line-" + num + ": No Production");
-        const cleanRemarks = line.remarks.map(r => r.trim()).filter(Boolean);
-        if (cleanRemarks.length > 0) {
-          out.push("Remark:");
-          cleanRemarks.forEach((r, i) => out.push((i + 1) + ". " + r));
-        }
-        return out.join("
-");
-      }
-
-      const dOps = pad2(line.dumping);
-      const pOps = pad2(line.packing);
-      const tOps = pad2((parseInt(line.dumping, 10) || 0) + (parseInt(line.packing, 10) || 0));
-
-      out.push("Line-" + num + ": " + tOps + " Operators");
-      out.push("Dumping: " + dOps + " Operators");
-      out.push("Packing: " + pOps + " Operators");
-
-      if (!isStartMode) {
-        const calc = computeLineMetrics(line);
-        const stageTitle = line.stage === "final" ? "Final Output" : "Current Output";
-        out.push("");
-        out.push("Target Output: " + calc.target.toFixed(3) + "MT");
-        out.push("*" + stageTitle + ": " + calc.actual.toFixed(3) + "MT*");
-        out.push(calc.varLabel + ": " + calc.varValue.toFixed(3) + "MT");
-
-        const dur = formatDuration(line.startTime, line.endTime);
-        const opRange = (line.startTime || "") + "-" + (line.endTime || "") + (dur ? " " + dur : "");
-        const rH = parseInt(line.runHrs, 10) || 0;
-        const rM = parseInt(line.runMins, 10) || 0;
-        const runStr = rM > 0 ? rH + "hrs " + rM + "mins" : rH + "hrs";
-
-        out.push("");
-        out.push("Operating Hours: " + opRange);
-        out.push("Prod. Running Hrs: " + runStr);
-        out.push("*Efficiency: " + calc.eff.toFixed(3) + "MT/hr*");
-      }
-
-      const cleanRemarks = line.remarks.map(r => r.trim()).filter(Boolean);
-      if (cleanRemarks.length > 0) {
-        out.push("");
-        out.push("Remark:");
-        cleanRemarks.forEach((r, i) => out.push((i + 1) + ". " + r));
-      }
-
-      return out.join("
-");
-    }
-
-    function buildWoBlock(num, list) {
-      const valid = list.filter(x => x.name.trim() || x.wo.trim());
-      if (valid.length === 0) return "";
-      const out = ["*Line " + num + ":*"];
-      valid.forEach((item, idx) => {
-        const prefix = valid.length > 1 ? (idx + 1) + ". " : "";
-        if (item.name.trim()) out.push(prefix + item.name.trim());
-        if (item.wo.trim()) out.push("WO: " + item.wo.trim());
-        if (item.completed) out.push("(Completed)");
-      });
-      return out.join("
-");
-    }
-
-    function generateReportText() {
-      const isStartMode = state.previewMode === "start";
-      const lines = [];
-
-      lines.push("*Dear Sirs & Ms.Priya,*");
-      lines.push("");
-
-      const dateStr = formatDisplayDate(state.date);
-      const shiftStr = state.shift ? state.shift + " Shift" : "Shift";
-      lines.push((dateStr + " " + state.location + " " + shiftStr + ":").trim());
-      lines.push("");
-
-      lines.push(buildLineBlock(1, state.line1, isStartMode));
-      lines.push("");
-      lines.push(buildLineBlock(2, state.line2, isStartMode));
-
-      if (!isStartMode && state.showTotalOutput) {
-        const l1Val = state.line1.status === "active" ? (parseFloat(state.line1.actual) || 0) : 0;
-        const l2Val = state.line2.status === "active" ? (parseFloat(state.line2.actual) || 0) : 0;
-        const tot = l1Val + l2Val;
-        lines.push("");
-        lines.push("*Total output = " + tot.toFixed(3) + "MT*");
-      }
-
-      lines.push("");
-      const bVal = state.batching.trim();
-      if (bVal) {
-        const formattedB = /^\d+$/.test(bVal) ? pad2(bVal) + " Operators" : bVal;
-        lines.push("Batching: " + formattedB);
-      } else {
-        lines.push("Batching:");
-      }
-
-      lines.push("");
-      lines.push("Labelling: " + (state.labelling.trim() || ""));
-
-      lines.push("");
-      const supStr = formatJoinNames(state.supervisors);
-      const qcStr = formatJoinNames(state.qcs);
-      let supQcLine = "";
-      if (supStr && qcStr) supQcLine = supStr + " ; " + qcStr;
-      else supQcLine = supStr || qcStr;
-      lines.push("Production Supervisor & QC:");
-      if (supQcLine) lines.push(supQcLine);
-
-      lines.push("");
-      lines.push("Leave:");
-      if (state.leaveText.trim()) {
-        lines.push(state.leaveText.trim());
-      }
-
-      const wo1 = buildWoBlock(1, state.l1Wos);
-      const wo2 = buildWoBlock(2, state.l2Wos);
-      if (wo1) {
-        lines.push("");
-        lines.push(wo1);
-      }
-      if (wo2) {
-        lines.push("");
-        lines.push(wo2);
-      }
-
-      lines.push("");
-      lines.push("Thank you Sirs,");
-      const allSenders = [...state.senders];
-      if (state.senderCustom.trim()) allSenders.push(state.senderCustom.trim());
-      const senderStr = formatJoinNames(allSenders);
-      if (senderStr) lines.push(senderStr);
-
-      return lines.join("
-");
-    }
-
-    function updatePreview() {
-      document.getElementById("previewBox").textContent = generateReportText();
-    }
-
-    function showToast(msg) {
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      setTimeout(() => t.classList.remove("show"), 2000);
-    }
-
-    function copyReport() {
-      const text = generateReportText();
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(() => {
-          showToast("Copied to clipboard!");
-        }).catch(() => fallbackCopy(text));
-      } else {
-        fallbackCopy(text);
-      }
-    }
-
-    function fallbackCopy(text) {
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      ta.style.position = "fixed";
-      ta.style.opacity = "0";
-      document.body.appendChild(ta);
-      ta.select();
-      try {
-        document.execCommand("copy");
-        showToast("Copied to clipboard!");
-      } catch (e) {
-        showToast("Copy failed - select text manually");
-      }
-      document.body.removeChild(ta);
-    }
-
-    function shareWhatsApp() {
-      const text = encodeURIComponent(generateReportText());
-      window.open("https://api.whatsapp.com/send?text=" + text, "_blank");
-    }
-
-    function openResetModal() {
-      document.getElementById("resetModal").classList.add("open");
-    }
-
-    function closeResetModal() {
-      document.getElementById("resetModal").classList.remove("open");
-    }
-
-    function confirmReset() {
-      state = getDefaultState();
-      saveState();
-      closeResetModal();
-      renderAll();
-      showToast("All fields reset to defaults");
-    }
-
-    // Initialize on load
-    renderAll();
-  </script>
+    <script>
+        (function () {
+            'use strict';
+
+            const STORAGE_KEY = 'wa_shift_report_generator_v3';
+            let state = {};
+            let activeWoTab = 1;
+            let toastTimer = null;
+
+            // --- Utility Helpers ---
+            function getTodayISO() {
+                const now = new Date();
+                const y = now.getFullYear();
+                const m = String(now.getMonth() + 1).padStart(2, '0');
+                const d = String(now.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+
+            function formatDateDDMMYYYY(iso) {
+                if (!iso) return '';
+                const parts = iso.split('-');
+                if (parts.length !== 3) return iso;
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+
+            function pad2(val) {
+                const n = Math.max(0, parseInt(val, 10) || 0);
+                return String(n).padStart(2, '0');
+            }
+
+            function formatTime12h(hhmm) {
+                if (!hhmm || !hhmm.includes(':')) return '';
+                const [hStr, mStr] = hhmm.split(':');
+                let h = parseInt(hStr, 10);
+                const m = parseInt(mStr, 10);
+                if (isNaN(h) || isNaN(m)) return '';
+                const suffix = h >= 12 ? 'pm' : 'am';
+                let h12 = h % 12;
+                if (h12 === 0) h12 = 12;
+                return `${String(h12).padStart(2, '0')}${String(m).padStart(2, '0')}${suffix}`;
+            }
+
+            function calcOperatingDuration(startHHMM, endHHMM) {
+                if (!startHHMM || !endHHMM) return '';
+                const [sh, sm] = startHHMM.split(':').map(Number);
+                const [eh, em] = endHHMM.split(':').map(Number);
+                if ([sh, sm, eh, em].some(isNaN)) return '';
+                let startTotal = sh * 60 + sm;
+                let endTotal = eh * 60 + em;
+                if (endTotal <= startTotal) {
+                    endTotal += 24 * 60; // Overnight shift
+                }
+                const diff = endTotal - startTotal;
+                const hrs = Math.floor(diff / 60);
+                const mins = diff % 60;
+                if (mins === 0) return `${hrs} hrs`;
+                return `${hrs} hrs ${mins} mins`;
+            }
+
+            function formatRunningHrs(hrsVal, minsVal) {
+                const h = parseInt(hrsVal, 10) || 0;
+                const m = parseInt(minsVal, 10) || 0;
+                if (h === 0 && m === 0) return '0 hrs';
+                if (m === 0) return `${h} hrs`;
+                if (h === 0) return `${m} mins`;
+                return `${h} hrs ${m} mins`;
+            }
+
+            function autoResize(el) {
+                if (!el) return;
+                el.style.height = 'auto';
+                el.style.height = Math.max(46, el.scrollHeight) + 'px';
+            }
+
+            function escapeHtml(str) {
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function mapSupervisorToSignOff(name) {
+                return name === 'Balaji' ? 'N. Balaji' : name;
+            }
+
+            function formatNameList(arr) {
+                if (!arr || arr.length === 0) return '';
+                if (arr.length === 1) return arr[0];
+                if (arr.length === 2) return `${arr[0]} & ${arr[1]}`;
+                return `${arr.slice(0, -1).join(', ')} & ${arr[arr.length - 1]}`;
+            }
+
+            function showToast(msg) {
+                const toast = document.getElementById('toast');
+                const toastMsg = document.getElementById('toastMsg');
+                if (!toast || !toastMsg) return;
+                toastMsg.textContent = msg;
+                toast.classList.remove('-translate-y-24', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    toast.classList.add('-translate-y-24', 'opacity-0');
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                }, 2200);
+            }
+
+            // --- Default State ---
+            function createDefaultState() {
+                return {
+                    reportStage: 'output', // 'start' | 'output'
+                    reportDate: getTodayISO(),
+                    location: 'Pioneer',
+                    shift: '', // Blank by default
+                    // Line 1: Active by default
+                    l1Active: true,
+                    l1Dumping: 4,
+                    l1Packing: 2,
+                    l1Target: 50,
+                    l1OutputMode: 'Current',
+                    l1Output: '',
+                    l1StartTime: '08:00',
+                    l1EndTime: '20:00',
+                    l1RunHrs: '',
+                    l1RunMins: '',
+                    l1Remarks: [],
+                    // Line 2: No Production by default
+                    l2Active: false,
+                    l2Dumping: 4,
+                    l2Packing: 2,
+                    l2Target: 33,
+                    l2OutputMode: 'Current',
+                    l2Output: '',
+                    l2StartTime: '08:00',
+                    l2EndTime: '20:00',
+                    l2RunHrs: '',
+                    l2RunMins: '',
+                    l2Remarks: [],
+                    // Total Output (Unchecked by default)
+                    showTotalOutput: false,
+                    // Batching & Labelling
+                    batchingNil: false,
+                    batchingText: '',
+                    labellingText: '',
+                    // Supervisors & QC
+                    supervisors: [],
+                    qcs: [],
+                    // Leave
+                    allPresent: false,
+                    leaveText: '',
+                    // Product & WO Cards
+                    l1Wos: [],
+                    l2Wos: [],
+                    // Sign-off
+                    signOffBubbles: [],
+                    customSignOff: ''
+                };
+            }
+
+            function loadState() {
+                const defaults = createDefaultState();
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (!raw) return defaults;
+                    const parsed = JSON.parse(raw);
+                    return Object.assign(defaults, parsed);
+                } catch (e) {
+                    return defaults;
+                }
+            }
+
+            function persistState() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                } catch (e) {
+                    // Ignore storage quota errors
+                }
+            }
+
+            // --- Sync Form Inputs from State ---
+            function syncInputsFromState() {
+                document.getElementById('reportDate').value = state.reportDate || '';
+
+                [1, 2].forEach(num => {
+                    document.getElementById(`l${num}Dumping`).value = state[`l${num}Dumping`];
+                    document.getElementById(`l${num}Packing`).value = state[`l${num}Packing`];
+                    document.getElementById(`l${num}Target`).value = state[`l${num}Target`];
+                    document.getElementById(`l${num}Output`).value = state[`l${num}Output`];
+                    document.getElementById(`l${num}StartTime`).value = state[`l${num}StartTime`];
+                    document.getElementById(`l${num}EndTime`).value = state[`l${num}EndTime`];
+                    document.getElementById(`l${num}RunHrs`).value = state[`l${num}RunHrs`];
+                    document.getElementById(`l${num}RunMins`).value = state[`l${num}RunMins`];
+                });
+
+                document.getElementById('showTotalOutput').checked = Boolean(state.showTotalOutput);
+                document.getElementById('batchingInput').value = state.batchingText || '';
+                const labEl = document.getElementById('labellingText');
+                labEl.value = state.labellingText || '';
+                autoResize(labEl);
+
+                const leaveEl = document.getElementById('leaveText');
+                leaveEl.value = state.leaveText || '';
+                autoResize(leaveEl);
+
+                document.getElementById('customSignOff').value = state.customSignOff || '';
+            }
+
+            // --- Render Dynamic Lists (Remarks & WOs) ---
+            function renderRemarksList(lineNum) {
+                const container = document.getElementById(`line${lineNum}RemarksList`);
+                const remarks = state[`l${lineNum}Remarks`] || [];
+                container.innerHTML = '';
+
+                if (remarks.length === 0) {
+                    const emptyHint = document.createElement('p');
+                    emptyHint.className = 'text-xs text-slate-400 italic';
+                    emptyHint.textContent = 'No remarks added.';
+                    container.appendChild(emptyHint);
+                    return;
+                }
+
+                remarks.forEach((text, idx) => {
+                    const row = document.createElement('div');
+                    row.className = 'flex items-start gap-2';
+
+                    const badge = document.createElement('span');
+                    badge.className = 'mt-2.5 w-6 h-6 rounded-lg bg-slate-100 border border-slate-200 text-xs font-mono font-bold text-slate-600 flex items-center justify-center shrink-0';
+                    badge.textContent = `${idx + 1}.`;
+
+                    const ta = document.createElement('textarea');
+                    ta.rows = 1;
+                    ta.className = 'auto-expand flex-1 px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none';
+                    ta.placeholder = `Enter remark ${idx + 1}...`;
+                    ta.value = text;
+                    ta.addEventListener('input', () => {
+                        state[`l${lineNum}Remarks`][idx] = ta.value;
+                        autoResize(ta);
+                        persistState();
+                        renderPreview();
+                    });
+
+                    const delBtn = document.createElement('button');
+                    delBtn.type = 'button';
+                    delBtn.className = 'mt-1.5 p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition shrink-0';
+                    delBtn.setAttribute('aria-label', 'Remove remark');
+                    delBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                    delBtn.addEventListener('click', () => {
+                        state[`l${lineNum}Remarks`].splice(idx, 1);
+                        renderRemarksList(lineNum);
+                        persistState();
+                        renderPreview();
+                    });
+
+                    row.appendChild(badge);
+                    row.appendChild(ta);
+                    row.appendChild(delBtn);
+                    container.appendChild(row);
+                    autoResize(ta);
+                });
+            }
+
+            function renderWoList(lineNum) {
+                const container = document.getElementById(`l${lineNum}WoList`);
+                const wos = state[`l${lineNum}Wos`] || [];
+                container.innerHTML = '';
+
+                if (wos.length === 0) {
+                    const emptyHint = document.createElement('p');
+                    emptyHint.className = 'text-xs text-slate-400 italic py-2';
+                    emptyHint.textContent = `No Work Orders added for Line ${lineNum}. Tap "+ Add WO" above.`;
+                    container.appendChild(emptyHint);
+                    return;
+                }
+
+                wos.forEach((item, idx) => {
+                    const card = document.createElement('div');
+                    card.className = 'p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5';
+
+                    const topBar = document.createElement('div');
+                    topBar.className = 'flex items-center justify-between gap-2';
+
+                    const label = document.createElement('span');
+                    label.className = 'text-xs font-extrabold text-slate-500 uppercase';
+                    label.textContent = `Line ${lineNum} — WO #${idx + 1}`;
+
+                    const actions = document.createElement('div');
+                    actions.className = 'flex items-center gap-2';
+
+                    const compBtn = document.createElement('button');
+                    compBtn.type = 'button';
+                    compBtn.className = item.completed
+                        ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow-sm transition'
+                        : 'px-2.5 py-1 rounded-lg text-xs font-bold bg-white text-slate-600 border border-slate-300 hover:bg-slate-100 transition';
+                    compBtn.textContent = item.completed ? '✓ Completed' : 'Mark Completed';
+                    compBtn.addEventListener('click', () => {
+                        state[`l${lineNum}Wos`][idx].completed = !state[`l${lineNum}Wos`][idx].completed;
+                        renderWoList(lineNum);
+                        persistState();
+                        renderPreview();
+                    });
+
+                    const rmBtn = document.createElement('button');
+                    rmBtn.type = 'button';
+                    rmBtn.className = 'p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition';
+                    rmBtn.setAttribute('aria-label', 'Remove WO');
+                    rmBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                    rmBtn.addEventListener('click', () => {
+                        state[`l${lineNum}Wos`].splice(idx, 1);
+                        renderWoList(lineNum);
+                        persistState();
+                        renderPreview();
+                    });
+
+                    actions.appendChild(compBtn);
+                    actions.appendChild(rmBtn);
+                    topBar.appendChild(label);
+                    topBar.appendChild(actions);
+
+                    const inputsGrid = document.createElement('div');
+                    inputsGrid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2.5';
+
+                    const nameInput = document.createElement('input');
+                    nameInput.type = 'text';
+                    nameInput.placeholder = 'Product Name (e.g. Plain Bag GL WPC)';
+                    nameInput.value = item.name || '';
+                    nameInput.className = 'w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none';
+                    nameInput.addEventListener('input', () => {
+                        state[`l${lineNum}Wos`][idx].name = nameInput.value;
+                        persistState();
+                        renderPreview();
+                    });
+
+                    const woInput = document.createElement('input');
+                    woInput.type = 'text';
+                    woInput.placeholder = 'WO Number (e.g. PRD26-0759)';
+                    woInput.value = item.wo || '';
+                    woInput.className = 'w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none';
+                    woInput.addEventListener('input', () => {
+                        state[`l${lineNum}Wos`][idx].wo = woInput.value;
+                        persistState();
+                        renderPreview();
+                    });
+
+                    inputsGrid.appendChild(nameInput);
+                    inputsGrid.appendChild(woInput);
+
+                    card.appendChild(topBar);
+                    card.appendChild(inputsGrid);
+                    container.appendChild(card);
+                });
+            }
+
+            // --- Update Visual UI States (Bubbles, Toggles, Calculated Displays) ---
+            function updateUIState() {
+                // Location Bubbles
+                document.querySelectorAll('.loc-btn').forEach(btn => {
+                    const active = btn.dataset.location === state.location;
+                    btn.className = active
+                        ? 'loc-btn py-2.5 px-3 rounded-xl text-sm font-bold border transition text-center bg-blue-600 text-white border-blue-600 shadow-sm'
+                        : 'loc-btn py-2.5 px-3 rounded-xl text-sm font-bold border transition text-center bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100';
+                });
+
+                // Shift Bubbles
+                document.querySelectorAll('.shift-btn').forEach(btn => {
+                    const active = btn.dataset.shift === state.shift;
+                    btn.className = active
+                        ? 'shift-btn py-2.5 px-3 rounded-xl text-sm font-bold border transition text-center bg-slate-900 text-white border-slate-900 shadow-sm'
+                        : 'shift-btn py-2.5 px-3 rounded-xl text-sm font-bold border transition text-center bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100';
+                });
+
+                // Line 1 & Line 2 Controls & Live Calculations
+                let combinedOutput = 0;
+
+                [1, 2].forEach(num => {
+                    const isActive = state[`l${num}Active`];
+                    const actBtn = document.getElementById(`l${num}ActiveBtn`);
+                    const inactBtn = document.getElementById(`l${num}InactiveBtn`);
+                    const fields = document.getElementById(`line${num}Fields`);
+
+                    if (isActive) {
+                        actBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow-sm';
+                        inactBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900';
+                        fields.classList.remove('hidden');
+                    } else {
+                        inactBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold transition bg-slate-700 text-white shadow-sm';
+                        actBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900';
+                        fields.classList.add('hidden');
+                    }
+
+                    // Operators Sum
+                    const dump = parseInt(state[`l${num}Dumping`], 10) || 0;
+                    const pack = parseInt(state[`l${num}Packing`], 10) || 0;
+                    document.getElementById(`l${num}TotalOpsDisplay`).textContent = pad2(dump + pack);
+
+                    // Output Mode Bar
+                    const mode = state[`l${num}OutputMode`];
+                    const curBtn = document.getElementById(`l${num}ModeCurrent`);
+                    const finBtn = document.getElementById(`l${num}ModeFinal`);
+                    const outLabel = document.getElementById(`l${num}OutputLabel`);
+
+                    if (mode === 'Current') {
+                        curBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold transition bg-blue-600 text-white shadow-sm';
+                        finBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900';
+                        outLabel.textContent = 'Current Output (MT)';
+                    } else {
+                        finBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow-sm';
+                        curBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900';
+                        outLabel.textContent = 'Final Output (MT)';
+                    }
+
+                    // Variance & Efficiency
+                    const target = parseFloat(state[`l${num}Target`]) || 0;
+                    const output = parseFloat(state[`l${num}Output`]) || 0;
+                    if (isActive) combinedOutput += output;
+
+                    const varLabelEl = document.getElementById(`l${num}VarianceLabel`);
+                    const varDispEl = document.getElementById(`l${num}VarianceDisplay`);
+
+                    if (output > target) {
+                        varLabelEl.textContent = 'Gain Output (MT)';
+                        varLabelEl.className = 'block text-xs font-bold text-emerald-700 mb-1';
+                        varDispEl.textContent = (output - target).toFixed(3);
+                    } else if (mode === 'Final') {
+                        varLabelEl.textContent = 'Loss Output (MT)';
+                        varLabelEl.className = 'block text-xs font-bold text-rose-600 mb-1';
+                        varDispEl.textContent = (target - output).toFixed(3);
+                    } else {
+                        varLabelEl.textContent = 'Balance Output (MT)';
+                        varLabelEl.className = 'block text-xs font-bold text-slate-500 mb-1';
+                        varDispEl.textContent = (target - output).toFixed(3);
+                    }
+
+                    // Operating Duration
+                    document.getElementById(`l${num}OpDurationDisplay`).textContent =
+                        calcOperatingDuration(state[`l${num}StartTime`], state[`l${num}EndTime`]) || '--';
+
+                    // Efficiency
+                    const runHrs = parseFloat(state[`l${num}RunHrs`]) || 0;
+                    const runMins = parseFloat(state[`l${num}RunMins`]) || 0;
+                    const totalRunHours = runHrs + (runMins / 60);
+                    const eff = totalRunHours > 0 ? (output / totalRunHours) : 0;
+                    document.getElementById(`l${num}EfficiencyDisplay`).textContent = eff.toFixed(3);
+                });
+
+                document.getElementById('totalOutputBadge').textContent = combinedOutput.toFixed(3);
+
+                // Batching NIL button
+                const nilBtn = document.getElementById('batchingNilBtn');
+                const batchInput = document.getElementById('batchingInput');
+                if (state.batchingNil) {
+                    nilBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold border transition bg-slate-900 text-white border-slate-900';
+                    batchInput.disabled = true;
+                    batchInput.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    nilBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold border transition bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200';
+                    batchInput.disabled = false;
+                    batchInput.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+
+                // Supervisors Bubbles
+                document.querySelectorAll('.sup-btn').forEach(btn => {
+                    const selected = state.supervisors.includes(btn.dataset.sup);
+                    btn.className = selected
+                        ? 'sup-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                        : 'sup-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100';
+                });
+
+                // QC Bubbles
+                document.querySelectorAll('.qc-btn').forEach(btn => {
+                    const selected = state.qcs.includes(btn.dataset.qc);
+                    btn.className = selected
+                        ? 'qc-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition bg-teal-600 text-white border-teal-600 shadow-sm'
+                        : 'qc-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100';
+                });
+
+                // Leave All Present Toggle
+                const allPresBtn = document.getElementById('allPresentBtn');
+                const allPresBanner = document.getElementById('allPresentBanner');
+                const leaveWrap = document.getElementById('leaveTextWrap');
+                if (state.allPresent) {
+                    allPresBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition bg-emerald-600 text-white border-emerald-600 shadow-sm';
+                    allPresBanner.classList.remove('hidden');
+                    leaveWrap.classList.add('hidden');
+                } else {
+                    allPresBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100';
+                    allPresBanner.classList.add('hidden');
+                    leaveWrap.classList.remove('hidden');
+                }
+
+                // WO Tabs
+                const woTab1 = document.getElementById('woTabL1Btn');
+                const woTab2 = document.getElementById('woTabL2Btn');
+                const woPanel1 = document.getElementById('woPanelL1');
+                const woPanel2 = document.getElementById('woPanelL2');
+                if (activeWoTab === 1) {
+                    woTab1.className = 'px-3 py-1 rounded-lg text-xs font-bold transition bg-cyan-600 text-white shadow-sm';
+                    woTab2.className = 'px-3 py-1 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900';
+                    woPanel1.classList.remove('hidden');
+                    woPanel2.classList.add('hidden');
+                } else {
+                    woTab2.className = 'px-3 py-1 rounded-lg text-xs font-bold transition bg-cyan-600 text-white shadow-sm';
+                    woTab1.className = 'px-3 py-1 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900';
+                    woPanel2.classList.remove('hidden');
+                    woPanel1.classList.add('hidden');
+                }
+
+                // Sign-off Bubbles
+                document.querySelectorAll('.sign-btn').forEach(btn => {
+                    const selected = state.signOffBubbles.includes(btn.dataset.sign);
+                    btn.className = selected
+                        ? 'sign-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition bg-slate-900 text-white border-slate-900 shadow-sm'
+                        : 'sign-btn py-2 px-4 rounded-full text-xs sm:text-sm font-bold border transition bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100';
+                });
+
+                // Preview Stage Switcher
+                const stageStartBtn = document.getElementById('stageStartBtn');
+                const stageOutputBtn = document.getElementById('stageOutputBtn');
+                if (state.reportStage === 'start') {
+                    stageStartBtn.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold transition flex items-center justify-center gap-1.5 bg-emerald-500 text-slate-950 shadow-sm';
+                    stageOutputBtn.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold transition flex items-center justify-center gap-1.5 bg-slate-800 text-slate-300 hover:text-white';
+                } else {
+                    stageOutputBtn.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold transition flex items-center justify-center gap-1.5 bg-emerald-500 text-slate-950 shadow-sm';
+                    stageStartBtn.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold transition flex items-center justify-center gap-1.5 bg-slate-800 text-slate-300 hover:text-white';
+                }
+            }
+
+            // --- Build WhatsApp Formatted Message ---
+            function buildWhatsAppMessage() {
+                const isStart = state.reportStage === 'start';
+                const lines = [];
+
+                // 1. Bold Greeting
+                lines.push('*Dear Sirs & Ms.Priya,*');
+                lines.push('');
+
+                // 2. Date, Location & Shift
+                const dateStr = formatDateDDMMYYYY(state.reportDate);
+                const shiftStr = state.shift ? `${state.shift} Shift:` : 'Shift:';
+                lines.push(`${dateStr} ${state.location} ${shiftStr}`.trim());
+                lines.push('');
+
+                // Helper to format each line section
+                let totalOutputSum = 0;
+
+                [1, 2].forEach(num => {
+                    const isActive = state[`l${num}Active`];
+                    const remarks = (state[`l${num}Remarks`] || []).map(r => r.trim()).filter(Boolean);
+
+                    if (!isActive) {
+                        lines.push(`Line-${num}: No Production`);
+                        if (remarks.length > 0) {
+                            lines.push('Remark:');
+                            remarks.forEach((r, i) => lines.push(`${i + 1}. ${r}`));
+                        }
+                        lines.push('');
+                        return;
+                    }
+
+                    const dump = parseInt(state[`l${num}Dumping`], 10) || 0;
+                    const pack = parseInt(state[`l${num}Packing`], 10) || 0;
+                    const totalOps = dump + pack;
+
+                    lines.push(`Line-${num}: ${pad2(totalOps)} Operators`);
+                    lines.push(`Dumping: ${pad2(dump)} Operators`);
+                    lines.push(`Packing: ${pad2(pack)} Operators`);
+                    lines.push('');
+
+                    if (!isStart) {
+                        const target = parseFloat(state[`l${num}Target`]) || 0;
+                        const output = parseFloat(state[`l${num}Output`]) || 0;
+                        const mode = state[`l${num}OutputMode`];
+                        totalOutputSum += output;
+
+                        lines.push(`Target Output: ${target.toFixed(3)}MT`);
+                        lines.push(`*${mode} Output: ${output.toFixed(3)}MT*`);
+
+                        if (output > target) {
+                            lines.push(`Gain Output: ${(output - target).toFixed(3)}MT`);
+                        } else if (mode === 'Final') {
+                            lines.push(`Loss Output: ${(target - output).toFixed(3)}MT`);
+                        } else {
+                            lines.push(`Balance Output: ${(target - output).toFixed(3)}MT`);
+                        }
+                        lines.push('');
+
+                        const start12 = formatTime12h(state[`l${num}StartTime`]);
+                        const end12 = formatTime12h(state[`l${num}EndTime`]);
+                        const dur = calcOperatingDuration(state[`l${num}StartTime`], state[`l${num}EndTime`]);
+                        lines.push(`Operating Hours: ${start12}-${end12} (${dur})`);
+
+                        const runHrs = parseFloat(state[`l${num}RunHrs`]) || 0;
+                        const runMins = parseFloat(state[`l${num}RunMins`]) || 0;
+                        const totalRun = runHrs + (runMins / 60);
+                        const eff = totalRun > 0 ? (output / totalRun) : 0;
+
+                        lines.push(`Prod. Running Hrs: ${formatRunningHrs(runHrs, runMins)}`);
+                        lines.push(`*Efficiency: ${eff.toFixed(3)}MT/hr*`);
+                        lines.push('');
+                    }
+
+                    if (remarks.length > 0) {
+                        if (isStart && remarks.length === 1) {
+                            lines.push(`Remark: ${remarks[0]}`);
+                        } else {
+                            lines.push('Remark:');
+                            remarks.forEach((r, i) => lines.push(`${i + 1}. ${r}`));
+                        }
+                        lines.push('');
+                    }
+                });
+
+                // Total Output (right after Line 2, only when checked and in Interval / Final mode)
+                if (!isStart && state.showTotalOutput) {
+                    lines.push(`*Total output = ${totalOutputSum.toFixed(3)}MT*`);
+                    lines.push('');
+                }
+
+                // Batching
+                if (state.batchingNil) {
+                    lines.push('Batching: NIL');
+                } else {
+                    const bText = (state.batchingText || '').trim();
+                    if (/^\d+$/.test(bText)) {
+                        lines.push(`Batching: ${pad2(bText)} Operators`);
+                    } else {
+                        lines.push(`Batching: ${bText || 'NIL'}`);
+                    }
+                }
+                lines.push('');
+
+                // Labelling
+                const lab = (state.labellingText || '').trim();
+                if (lab) {
+                    lines.push(`Labelling: ${lab}`);
+                    lines.push('');
+                }
+
+                // Production Supervisor & QC
+                const supStr = formatNameList(state.supervisors);
+                const qcStr = formatNameList(state.qcs);
+                let supQcLine = '';
+                if (supStr && qcStr) {
+                    supQcLine = `${supStr} ; ${qcStr}`;
+                } else if (supStr) {
+                    supQcLine = supStr;
+                } else if (qcStr) {
+                    supQcLine = qcStr;
+                }
+                lines.push('Production Supervisor & QC:');
+                if (supQcLine) lines.push(supQcLine);
+                lines.push('');
+
+                // Leave
+                if (state.allPresent) {
+                    lines.push('Leave: All Present.');
+                } else {
+                    const lv = (state.leaveText || '').trim();
+                    if (lv) {
+                        lines.push('Leave:');
+                        lines.push(lv);
+                    } else {
+                        lines.push('Leave: All Present.');
+                    }
+                }
+                lines.push('');
+
+                // Product & WO Details
+                [1, 2].forEach(num => {
+                    const validWos = (state[`l${num}Wos`] || []).filter(w => (w.name || '').trim() || (w.wo || '').trim());
+                    if (validWos.length === 0) return;
+
+                    lines.push(`*Line ${num}:*`);
+                    validWos.forEach((w, idx) => {
+                        const prefix = validWos.length > 1 ? `${idx + 1}. ` : '';
+                        if ((w.name || '').trim()) {
+                            lines.push(`${prefix}${w.name.trim()}`);
+                        }
+                        if ((w.wo || '').trim()) {
+                            lines.push(`WO: ${w.wo.trim()}`);
+                        }
+                        if (w.completed) {
+                            lines.push('(Completed)');
+                        }
+                        if (idx < validWos.length - 1) {
+                            lines.push('');
+                        }
+                    });
+                    lines.push('');
+                });
+
+                // Sign-off
+                lines.push('Thank you Sirs,');
+                const customSign = (state.customSignOff || '').trim();
+                const signName = customSign || formatNameList(state.signOffBubbles);
+                if (signName) {
+                    lines.push(signName);
+                }
+
+                return lines.join('\n').trim();
+            }
+
+            function renderPreview() {
+                const rawMsg = buildWhatsAppMessage();
+                document.getElementById('rawOutputText').value = rawMsg;
+
+                // Convert WhatsApp *bold* to <strong> for realistic preview
+                const safeHtml = escapeHtml(rawMsg).replace(/\*([^\*\n]+)\*/g, '<strong class="font-bold text-slate-950">$1</strong>');
+                document.getElementById('whatsappPreviewRendered').innerHTML = safeHtml;
+
+                const now = new Date();
+                document.getElementById('previewTimestamp').textContent =
+                    `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            }
+
+            function saveAndRender() {
+                persistState();
+                updateUIState();
+                renderPreview();
+            }
+
+            // --- Clipboard & WhatsApp Share ---
+            function copyReport() {
+                const rawEl = document.getElementById('rawOutputText');
+                rawEl.classList.remove('sr-only');
+                rawEl.style.position = 'fixed';
+                rawEl.style.left = '-9999px';
+                rawEl.select();
+                rawEl.setSelectionRange(0, 99999);
+                try {
+                    document.execCommand('copy');
+                    showToast('Report copied for WhatsApp!');
+                } catch (e) {
+                    showToast('Copy failed — please select text manually.');
+                }
+                rawEl.classList.add('sr-only');
+                rawEl.style.position = '';
+                rawEl.style.left = '';
+            }
+
+            function openWhatsApp() {
+                const rawMsg = document.getElementById('rawOutputText').value;
+                const url = `https://wa.me/?text=${encodeURIComponent(rawMsg)}`;
+                window.open(url, '_blank', 'noopener,noreferrer');
+            }
+
+            // --- Shift & Line Default Remark Helpers ---
+            function applyDefaultRemarkForLine(lineNum) {
+                const isActive = state[`l${lineNum}Active`];
+                const defaultRegex = new RegExp(`^Line ${lineNum} starts at 0800(am|pm)\\.$`);
+
+                if (!isActive) {
+                    // Remove default start remark when set to No Production
+                    state[`l${lineNum}Remarks`] = (state[`l${lineNum}Remarks`] || []).filter(r => !defaultRegex.test(r.trim()));
+                } else if (state.shift) {
+                    const timeTag = state.shift === 'Night' ? '0800pm' : '0800am';
+                    const targetText = `Line ${lineNum} starts at ${timeTag}.`;
+                    const remarks = state[`l${lineNum}Remarks`] || [];
+                    if (remarks.length === 0) {
+                        state[`l${lineNum}Remarks`] = [targetText];
+                    } else if (defaultRegex.test(remarks[0].trim())) {
+                        state[`l${lineNum}Remarks`][0] = targetText;
+                    }
+                }
+                renderRemarksList(lineNum);
+            }
+
+            // --- Bind All Event Listeners ---
+            function bindEvents() {
+                // Reset Modal
+                const modal = document.getElementById('resetModal');
+                document.getElementById('openResetModalBtn').addEventListener('click', () => {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                });
+                document.getElementById('cancelResetBtn').addEventListener('click', () => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                });
+                document.getElementById('confirmResetBtn').addEventListener('click', () => {
+                    state = createDefaultState();
+                    activeWoTab = 1;
+                    persistState();
+                    syncInputsFromState();
+                    renderRemarksList(1);
+                    renderRemarksList(2);
+                    renderWoList(1);
+                    renderWoList(2);
+                    updateUIState();
+                    renderPreview();
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    showToast('All details reset to defaults.');
+                });
+
+                // Date
+                document.getElementById('reportDate').addEventListener('change', (e) => {
+                    state.reportDate = e.target.value;
+                    saveAndRender();
+                });
+
+                // Location Bubbles
+                document.querySelectorAll('.loc-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        state.location = btn.dataset.location;
+                        saveAndRender();
+                    });
+                });
+
+                // Shift Bubbles
+                document.querySelectorAll('.shift-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        state.shift = btn.dataset.shift;
+                        const isNight = state.shift === 'Night';
+                        const startT = isNight ? '20:00' : '08:00';
+                        const endT = isNight ? '08:00' : '20:00';
+                        state.l1StartTime = startT;
+                        state.l1EndTime = endT;
+                        state.l2StartTime = startT;
+                        state.l2EndTime = endT;
+                        syncInputsFromState();
+                        applyDefaultRemarkForLine(1);
+                        applyDefaultRemarkForLine(2);
+                        saveAndRender();
+                    });
+                });
+
+                // Line 1 & Line 2 Controls
+                [1, 2].forEach(num => {
+                    document.getElementById(`l${num}ActiveBtn`).addEventListener('click', () => {
+                        state[`l${num}Active`] = true;
+                        applyDefaultRemarkForLine(num);
+                        saveAndRender();
+                    });
+                    document.getElementById(`l${num}InactiveBtn`).addEventListener('click', () => {
+                        state[`l${num}Active`] = false;
+                        applyDefaultRemarkForLine(num);
+                        saveAndRender();
+                    });
+
+                    document.getElementById(`l${num}ModeCurrent`).addEventListener('click', () => {
+                        state[`l${num}OutputMode`] = 'Current';
+                        saveAndRender();
+                    });
+                    document.getElementById(`l${num}ModeFinal`).addEventListener('click', () => {
+                        state[`l${num}OutputMode`] = 'Final';
+                        saveAndRender();
+                    });
+
+                    ['Dumping', 'Packing', 'Target', 'Output', 'RunHrs', 'RunMins'].forEach(field => {
+                        document.getElementById(`l${num}${field}`).addEventListener('input', (e) => {
+                            state[`l${num}${field}`] = e.target.value;
+                            saveAndRender();
+                        });
+                    });
+
+                    ['StartTime', 'EndTime'].forEach(field => {
+                        document.getElementById(`l${num}${field}`).addEventListener('change', (e) => {
+                            state[`l${num}${field}`] = e.target.value;
+                            saveAndRender();
+                        });
+                    });
+
+                    document.getElementById(`addL${num}RemarkBtn`).addEventListener('click', () => {
+                        state[`l${num}Remarks`].push('');
+                        renderRemarksList(num);
+                        persistState();
+                        renderPreview();
+                    });
+
+                    document.getElementById(`addL${num}WoBtn`).addEventListener('click', () => {
+                        state[`l${num}Wos`].push({ name: '', wo: '', completed: false });
+                        renderWoList(num);
+                        persistState();
+                        renderPreview();
+                    });
+                });
+
+                // Total Output Checkbox
+                document.getElementById('showTotalOutput').addEventListener('change', (e) => {
+                    state.showTotalOutput = e.target.checked;
+                    saveAndRender();
+                });
+
+                // Batching
+                document.getElementById('batchingNilBtn').addEventListener('click', () => {
+                    state.batchingNil = !state.batchingNil;
+                    saveAndRender();
+                });
+                document.getElementById('batchingInput').addEventListener('input', (e) => {
+                    state.batchingText = e.target.value;
+                    saveAndRender();
+                });
+
+                // Labelling
+                const labEl = document.getElementById('labellingText');
+                labEl.addEventListener('input', () => {
+                    state.labellingText = labEl.value;
+                    autoResize(labEl);
+                    saveAndRender();
+                });
+
+                // Supervisors (auto-sync with Sign-Off, mapping Balaji -> N. Balaji)
+                document.querySelectorAll('.sup-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const sup = btn.dataset.sup;
+                        const mappedSign = mapSupervisorToSignOff(sup);
+                        const idx = state.supervisors.indexOf(sup);
+                        if (idx === -1) {
+                            state.supervisors.push(sup);
+                            if (!state.signOffBubbles.includes(mappedSign)) {
+                                state.signOffBubbles.push(mappedSign);
+                            }
+                        } else {
+                            state.supervisors.splice(idx, 1);
+                            const sIdx = state.signOffBubbles.indexOf(mappedSign);
+                            if (sIdx !== -1) state.signOffBubbles.splice(sIdx, 1);
+                        }
+                        saveAndRender();
+                    });
+                });
+
+                // QC Bubbles
+                document.querySelectorAll('.qc-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const qc = btn.dataset.qc;
+                        const idx = state.qcs.indexOf(qc);
+                        if (idx === -1) state.qcs.push(qc);
+                        else state.qcs.splice(idx, 1);
+                        saveAndRender();
+                    });
+                });
+
+                // Leave & Attendance
+                document.getElementById('allPresentBtn').addEventListener('click', () => {
+                    state.allPresent = !state.allPresent;
+                    saveAndRender();
+                });
+                const leaveEl = document.getElementById('leaveText');
+                leaveEl.addEventListener('input', () => {
+                    state.leaveText = leaveEl.value;
+                    autoResize(leaveEl);
+                    saveAndRender();
+                });
+
+                // WO Tabs
+                document.getElementById('woTabL1Btn').addEventListener('click', () => {
+                    activeWoTab = 1;
+                    updateUIState();
+                });
+                document.getElementById('woTabL2Btn').addEventListener('click', () => {
+                    activeWoTab = 2;
+                    updateUIState();
+                });
+
+                // Sign-off Bubbles & Custom Input
+                document.querySelectorAll('.sign-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const sign = btn.dataset.sign;
+                        const idx = state.signOffBubbles.indexOf(sign);
+                        if (idx === -1) state.signOffBubbles.push(sign);
+                        else state.signOffBubbles.splice(idx, 1);
+                        saveAndRender();
+                    });
+                });
+                document.getElementById('customSignOff').addEventListener('input', (e) => {
+                    state.customSignOff = e.target.value;
+                    saveAndRender();
+                });
+
+                // Preview Stage Switcher
+                document.getElementById('stageStartBtn').addEventListener('click', () => {
+                    state.reportStage = 'start';
+                    saveAndRender();
+                });
+                document.getElementById('stageOutputBtn').addEventListener('click', () => {
+                    state.reportStage = 'output';
+                    saveAndRender();
+                });
+
+                // Copy & WhatsApp Buttons
+                document.getElementById('previewCopyBtn').addEventListener('click', copyReport);
+                document.getElementById('desktopCopyBtn').addEventListener('click', copyReport);
+                document.getElementById('mobileCopyBtn').addEventListener('click', copyReport);
+                document.getElementById('desktopWaBtn').addEventListener('click', openWhatsApp);
+                document.getElementById('mobileWaBtn').addEventListener('click', openWhatsApp);
+            }
+
+            // --- Initialize on DOM Ready ---
+            document.addEventListener('DOMContentLoaded', () => {
+                state = loadState();
+                syncInputsFromState();
+                renderRemarksList(1);
+                renderRemarksList(2);
+                renderWoList(1);
+                renderWoList(2);
+                updateUIState();
+                renderPreview();
+                bindEvents();
+            });
+        })();
+    </script>
 </body>
 </html>
